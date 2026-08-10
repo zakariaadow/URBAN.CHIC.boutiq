@@ -39,9 +39,10 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['react-icons', 'react-toastify', 'react-i18next'],
+        manualChunks: (id) => {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
         },
       },
     },
