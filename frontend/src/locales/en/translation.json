@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "gallery": "Gallery",
+    "pricing": "Pricing",
+    "team": "Team",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "language": "Select Language",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
+  },
+  "auth": {
+    "logoutSuccess": "Logged out successfully"
+  },
+  "home": {
+    "title": "Welcome to Urban Chic Boutique",
+    "subtitle": "Hair • Nails • Beauty"
+  }
+}

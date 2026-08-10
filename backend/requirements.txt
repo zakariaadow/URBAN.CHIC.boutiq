@@ -1,0 +1,62 @@
+# Core Framework
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==4.0.4
+Flask-CORS==4.0.0
+Flask-Limiter==3.3.1
+
+# Database
+SQLAlchemy==2.0.20
+alembic==1.12.0
+
+# Authentication
+PyJWT==2.8.0
+python-dotenv==1.0.0
+bcrypt==4.0.1
+
+# Email
+Flask-Mail==0.9.1
+
+# PDF Generation
+reportlab==4.0.4
+
+# Excel/File Export
+openpyxl==3.1.2
+pandas==2.0.3
+
+# Image Processing
+Pillow==10.0.0
+python-magic==0.4.27
+
+# Validation
+email-validator==2.0.0
+marshmallow==3.19.0
+marshmallow-sqlalchemy==0.29.0
+
+# HTTP Client
+requests==2.31.0
+
+# Date/Time
+python-dateutil==2.8.2
+
+# Background Tasks
+celery==5.3.1
+redis==4.6.0
+
+# Monitoring
+prometheus-flask-exporter==0.22.4
+
+# Development Tools
+Flask-DebugToolbar==0.13.1
+pytest==7.4.0
+pytest-flask==1.2.0
+coverage==7.3.0
+black==23.7.0
+flake8==6.1.0
+
+# Production
+gunicorn==21.2.0
+psycopg2-binary==2.9.7  # For PostgreSQL in production
+
+# Utils
+uuid==1.30

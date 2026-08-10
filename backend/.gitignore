@@ -1,0 +1,374 @@
+# ============================================
+# Python / Flask
+# ============================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.pyc
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.whl
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+poetry.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ============================================
+# IDE / Editor
+# ============================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# Vim
+*.swp
+*.swo
+*~
+*.un~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================
+# Frontend / Node.js
+# ============================================
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript
+*.tsbuildinfo
+
+# ============================================
+# Database
+# ============================================
+
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# ============================================
+# Uploads / Media
+# ============================================
+
+uploads/
+media/
+app/uploads/
+app/media/
+static/uploads/
+static/media/
+uploads/profiles/
+uploads/gallery/
+uploads/services/
+uploads/before_after/
+uploads/receipts/
+uploads/promotions/
+
+# ============================================
+# Backups
+# ============================================
+
+backups/
+*.backup
+*.bak
+*.old
+
+# ============================================
+# Logs
+# ============================================
+
+*.log
+logs/
+app.log
+flask.log
+gunicorn.log
+access.log
+error.log
+
+# ============================================
+# Environment / Configuration
+# ============================================
+
+# Local environment files
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+
+# Config files
+config.local.py
+config.py~
+
+# ============================================
+# Temporary files
+# ============================================
+
+*.tmp
+*.temp
+*.cache
+*.swp
+*.swo
+*~
+
+# ============================================
+# OS / System
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+*.pid
+
+# ============================================
+# Project specific
+# ============================================
+
+# Flask session files
+flask_session/
+
+# Migration files (optional - uncomment if you want to track migrations)
+# migrations/
+# alembic.ini
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Gunicorn
+gunicorn.conf.py
+
+# ============================================
+# Docker
+# ============================================
+
+.dockerignore
+docker-compose.override.yml
+docker-compose.local.yml
+
+# ============================================
+# Secrets / Keys
+# ============================================
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# ============================================
+# Reports / Exports
+# ============================================
+
+reports/
+exports/
+*.pdf
+*.xlsx
+*.csv
+*.zip
+*.tar.gz
+
+# ============================================
+# Testing
+# ============================================
+
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+*.cover
+.hypothesis/
+*.pytest_cache
+
+# ============================================
+# Documentation
+# ============================================
+
+docs/_build/
+docs/_static/
+site/
+
+# ============================================
+# Misc
+# ============================================
+
+*.orig
+*.rej
+*.patch
+*.diff
+*.log
+*.out
+*.pid
+*.lock
+*.seed
+*.pids
+*.pid.lock
