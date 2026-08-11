@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -112,9 +111,13 @@ def create_app(config_name=None):
 
 
     # ========================================================
-    # INITIALIZE SERVER SESSION
+    # INITIALIZE SERVER SESSION - ✅ FIXED
     # ========================================================
 
+    # Make sure session cookie name is set
+    if 'SESSION_COOKIE_NAME' not in app.config:
+        app.config['SESSION_COOKIE_NAME'] = 'urban_chic_session'
+    
     server_session.init_app(app)
 
 
@@ -199,4 +202,3 @@ def create_app(config_name=None):
     # ========================================================
 
     return app
-

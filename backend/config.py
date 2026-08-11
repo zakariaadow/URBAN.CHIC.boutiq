@@ -147,27 +147,24 @@ class Config:
     FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
     # ========================================================
-    # SESSION SETTINGS - ✅ FIXED
+    # SESSION SETTINGS - ✅ COMPLETELY FIXED
     # ========================================================
 
-    SESSION_TYPE = "filesystem"
-    SESSION_COOKIE_NAME = "urban_chic_session"  # ✅ ADDED
+    # Use 'simple' session type for production (works on Render)
+    SESSION_TYPE = "simple"
+    SESSION_COOKIE_NAME = "urban_chic_session"  # ✅ MUST be a string
     
-    if IS_VERCEL or IS_RENDER:
-        SESSION_FILE_DIR = "/tmp/flask_session"
-    else:
-        SESSION_FILE_DIR = os.path.join(BASE_DIR, "flask_session")
-
-    # ✅ Ensure the session directory exists
-    if not os.path.exists(SESSION_FILE_DIR):
-        os.makedirs(SESSION_FILE_DIR, exist_ok=True)
-
+    # Session security settings
     SESSION_PERMANENT = True
     SESSION_USE_SIGNER = True
     SESSION_KEY_PREFIX = "urban_chic_"
+    
+    # Cookie settings
     SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "True" if not IS_LOCAL else "False").lower() == "true"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_DOMAIN = None  # Allow all domains
+    
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     # ========================================================
