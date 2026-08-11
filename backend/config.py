@@ -1,6 +1,8 @@
+
 import os
-from dotenv import load_dotenv
 from datetime import timedelta
+from dotenv import load_dotenv
+
 
 # ============================================================
 # BASE DIRECTORY
@@ -8,22 +10,40 @@ from datetime import timedelta
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+
 # ============================================================
-# LOAD ENVIRONMENT VARIABLES
+# ENVIRONMENT
 # ============================================================
 
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+
+# Load .env for local development only.
+# On Vercel, environment variables are provided by Vercel.
 ENV_FILE = os.path.join(BASE_DIR, ".env")
 
-load_dotenv(
-    dotenv_path=ENV_FILE,
-    override=True
-)
+if not IS_VERCEL:
+    load_dotenv(
+        dotenv_path=ENV_FILE,
+        override=False
+    )
+else:
+    # Do not allow a .env file inside the deployment
+    # to overwrite Vercel environment variables.
+    load_dotenv(
+        dotenv_path=ENV_FILE,
+        override=False
+    )
 
-print(f"Environment file loaded from: {ENV_FILE}")
 
+print(f"Environment: {'VERCEL' if IS_VERCEL else 'LOCAL'}")
+
+
+# ============================================================
+# BASE CONFIGURATION
+# ============================================================
 
 class Config:
-    """Base configuration."""
+    """Base application configuration."""
 
     # ========================================================
     # APPLICATION SETTINGS
@@ -35,9 +55,16 @@ class Config:
     )
 
     SECRET_KEY = os.environ.get(
-        "SECRET_KEY",
-        "dev-secret-key-change-in-production"
+        "SECRET_KEY"
     )
+
+    if not SECRET_KEY:
+        if IS_VERCEL:
+            raise RuntimeError(
+                "SECRET_KEY is not configured in Vercel."
+            )
+
+        SECRET_KEY = "dev-secret-key-change-in-production"
 
     DEBUG = os.environ.get(
         "DEBUG",
@@ -49,10 +76,12 @@ class Config:
         "False"
     ).lower() == "true"
 
+    # Vercel should use production unless explicitly changed.
     ENV = os.environ.get(
         "FLASK_ENV",
-        "development"
+        "production" if IS_VERCEL else "development"
     )
+
 
     # ========================================================
     # DATABASE SETTINGS
@@ -63,7 +92,8 @@ class Config:
     if not DATABASE_URL:
         raise RuntimeError(
             "DATABASE_URL is not configured. "
-            "Set DATABASE_URL in the .env file."
+            "Add DATABASE_URL to the Vercel project "
+            "Environment Variables."
         )
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
@@ -75,21 +105,32 @@ class Config:
         "False"
     ).lower() == "true"
 
+    # MySQL connection settings.
+    #
+    # Vercel is serverless, so use a small connection pool.
+    # The database provider must allow remote connections.
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_size": int(
-            os.environ.get(
-                "DB_POOL_SIZE",
-                10
-            )
-        ),
+        "pool_pre_ping": True,
         "pool_recycle": int(
             os.environ.get(
                 "DB_POOL_RECYCLE",
-                3600
+                "280"
             )
         ),
-        "pool_pre_ping": True
+        "pool_size": int(
+            os.environ.get(
+                "DB_POOL_SIZE",
+                "5"
+            )
+        ),
+        "max_overflow": int(
+            os.environ.get(
+                "DB_MAX_OVERFLOW",
+                "2"
+            )
+        )
     }
+
 
     # ========================================================
     # CORS SETTINGS
@@ -98,19 +139,25 @@ class Config:
     CORS_ORIGINS = os.environ.get(
         "CORS_ORIGINS",
         "http://localhost:3000,"
+        "http://localhost:5173,"
         "http://127.0.0.1:3000,"
-        "http://localhost:5173"
+        "http://127.0.0.1:5173"
     )
+
 
     # ========================================================
     # UPLOAD SETTINGS
     # ========================================================
 
-    UPLOAD_FOLDER = os.path.join(
-        BASE_DIR,
-        "app",
-        "uploads"
-    )
+    if IS_VERCEL:
+        # Vercel filesystem is read-only except /tmp.
+        UPLOAD_FOLDER = "/tmp/urban_chic_uploads"
+    else:
+        UPLOAD_FOLDER = os.path.join(
+            BASE_DIR,
+            "app",
+            "uploads"
+        )
 
     MAX_CONTENT_LENGTH = int(
         os.environ.get(
@@ -118,6 +165,7 @@ class Config:
             16 * 1024 * 1024
         )
     )
+
 
     # ========================================================
     # EMAIL SETTINGS
@@ -163,14 +211,16 @@ class Config:
         "False"
     ).lower() == "true"
 
+
     # ========================================================
     # FRONTEND URL
     # ========================================================
 
     FRONTEND_URL = os.environ.get(
         "FRONTEND_URL",
-        "http://localhost:3000"
+        "http://localhost:5173"
     )
+
 
     # ========================================================
     # SESSION SETTINGS
@@ -178,9 +228,8 @@ class Config:
 
     SESSION_TYPE = "filesystem"
 
-    # Vercel's deployment filesystem is read-only.
-    # /tmp is writable in Vercel serverless functions.
-    if os.environ.get("VERCEL"):
+    # Vercel serverless functions can only write to /tmp.
+    if IS_VERCEL:
         SESSION_FILE_DIR = "/tmp/flask_session"
     else:
         SESSION_FILE_DIR = os.path.join(
@@ -194,10 +243,12 @@ class Config:
 
     SESSION_KEY_PREFIX = "urban_chic_"
 
-    SESSION_COOKIE_SECURE = os.environ.get(
-        "SESSION_COOKIE_SECURE",
-        "False"
-    ).lower() == "true"
+    SESSION_COOKIE_SECURE = (
+        os.environ.get(
+            "SESSION_COOKIE_SECURE",
+            "True" if IS_VERCEL else "False"
+        ).lower() == "true"
+    )
 
     SESSION_COOKIE_HTTPONLY = True
 
@@ -208,6 +259,7 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(
         days=7
     )
+
 
     # ========================================================
     # RATE LIMITING
@@ -227,6 +279,7 @@ class Config:
         "RATELIMIT_STORAGE_URI",
         "memory://"
     )
+
 
     # ========================================================
     # LOGGING
@@ -248,6 +301,7 @@ class Config:
         "%(levelname)s - "
         "%(message)s"
     )
+
 
     # ========================================================
     # BUSINESS DETAILS
@@ -281,9 +335,10 @@ class Config:
     TAX_RATE = float(
         os.environ.get(
             "TAX_RATE",
-            0.16
+            "0.16"
         )
     )
+
 
     # ========================================================
     # LOYALTY SETTINGS
@@ -292,16 +347,17 @@ class Config:
     LOYALTY_POINTS_PER_KES = float(
         os.environ.get(
             "LOYALTY_POINTS_PER_KES",
-            0.1
+            "0.1"
         )
     )
 
     LOYALTY_POINTS_EXPIRY_DAYS = int(
         os.environ.get(
             "LOYALTY_POINTS_EXPIRY_DAYS",
-            365
+            "365"
         )
     )
+
 
     # ========================================================
     # COMMISSION SETTINGS
@@ -310,9 +366,10 @@ class Config:
     DEFAULT_COMMISSION_RATE = float(
         os.environ.get(
             "DEFAULT_COMMISSION_RATE",
-            0.10
+            "0.10"
         )
     )
+
 
     # ========================================================
     # SECURITY
@@ -323,19 +380,26 @@ class Config:
         "True"
     ).lower() == "true"
 
+
     # ========================================================
     # BACKUP SETTINGS
     # ========================================================
 
-    BACKUP_DIR = os.environ.get(
-        "BACKUP_DIR",
-        "backups"
-    )
+    if IS_VERCEL:
+        BACKUP_DIR = "/tmp/urban_chic_backups"
+    else:
+        BACKUP_DIR = os.environ.get(
+            "BACKUP_DIR",
+            os.path.join(
+                BASE_DIR,
+                "backups"
+            )
+        )
 
     BACKUP_RETENTION_DAYS = int(
         os.environ.get(
             "BACKUP_RETENTION_DAYS",
-            30
+            "30"
         )
     )
 
@@ -369,7 +433,7 @@ class TestingConfig(Config):
 
     DEBUG = True
 
-    # Tests use an isolated SQLite database.
+    # SQLite is used ONLY for tests.
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
     SESSION_COOKIE_SECURE = False
@@ -386,7 +450,7 @@ class TestingConfig(Config):
 # ============================================================
 
 class ProductionConfig(Config):
-    """Production configuration."""
+    """Production configuration for Vercel."""
 
     DEBUG = False
 
@@ -394,8 +458,6 @@ class ProductionConfig(Config):
 
     SESSION_COOKIE_SECURE = True
 
-    # Keep filesystem sessions for now.
-    # The Vercel-specific path above redirects them to /tmp.
     SESSION_TYPE = "filesystem"
 
     CSRF_ENABLED = True
@@ -413,5 +475,5 @@ config = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
     "production": ProductionConfig,
-    "default": DevelopmentConfig
+    "default": ProductionConfig
 }

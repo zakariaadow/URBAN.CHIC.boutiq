@@ -1,3 +1,4 @@
+
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -5,61 +6,197 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_session import Session
+
 import os
+import sys
 from datetime import datetime
 
-# Import config from root (parent directory)
-import sys
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# ============================================================
+# CONFIGURATION PATH
+# ============================================================
+
+# Add the backend directory to Python's import path.
+BACKEND_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+
+if BACKEND_DIR not in sys.path:
+    sys.path.insert(0, BACKEND_DIR)
+
+
 from config import config
 
-from .extensions import db, migrate, login_manager, server_session, mail, cors
+
+# ============================================================
+# APPLICATION EXTENSIONS
+# ============================================================
+
+from .extensions import (
+    db,
+    migrate,
+    login_manager,
+    server_session,
+    mail,
+    cors
+)
+
 from .routes import register_routes
 from .errors import register_error_handlers
 from .utils.auth import init_auth
 
+
+# ============================================================
+# APPLICATION FACTORY
+# ============================================================
+
 def create_app(config_name=None):
-    """Application factory pattern"""
+    """Create and configure the Flask application."""
+
     app = Flask(__name__)
-    
-    # Load configuration
+
+
+    # ========================================================
+    # LOAD CONFIGURATION
+    # ========================================================
+
     if config_name is None:
-        config_name = os.environ.get('FLASK_ENV', 'development')
-    
-    app.config.from_object(config[config_name])
-    
-    # Store start time
-    app.config['START_TIME'] = datetime.utcnow().isoformat()
-    
-    # Initialize extensions
+        config_name = os.environ.get(
+            "FLASK_ENV",
+            "production"
+        )
+
+    # Make sure an invalid environment does not crash
+    # because of a missing configuration key.
+    if config_name not in config:
+        config_name = "production"
+
+    app.config.from_object(
+        config[config_name]
+    )
+
+
+    # ========================================================
+    # APPLICATION START TIME
+    # ========================================================
+
+    app.config["START_TIME"] = (
+        datetime.utcnow().isoformat()
+    )
+
+
+    # ========================================================
+    # INITIALIZE DATABASE
+    # ========================================================
+
     db.init_app(app)
-    migrate.init_app(app, db)
+
+
+    # ========================================================
+    # INITIALIZE DATABASE MIGRATIONS
+    # ========================================================
+
+    migrate.init_app(
+        app,
+        db
+    )
+
+
+    # ========================================================
+    # INITIALIZE LOGIN MANAGER
+    # ========================================================
+
     login_manager.init_app(app)
+
+
+    # ========================================================
+    # INITIALIZE SERVER SESSION
+    # ========================================================
+
     server_session.init_app(app)
+
+
+    # ========================================================
+    # INITIALIZE CORS
+    # ========================================================
+
     cors.init_app(app)
-    
-    # Initialize mail with app
+
+
+    # ========================================================
+    # INITIALIZE EMAIL
+    # ========================================================
+
     mail.init_app(app)
-    
-    # Print email config for debugging
+
+
+    # ========================================================
+    # EMAIL CONFIGURATION LOGGING
+    # ========================================================
+
     print("=" * 60)
-    print("📧 EMAIL CONFIGURATION")
+    print("EMAIL CONFIGURATION")
     print("=" * 60)
-    print(f"MAIL_SERVER: {app.config.get('MAIL_SERVER')}")
-    print(f"MAIL_PORT: {app.config.get('MAIL_PORT')}")
-    print(f"MAIL_USE_TLS: {app.config.get('MAIL_USE_TLS')}")
-    print(f"MAIL_USERNAME: {app.config.get('MAIL_USERNAME')}")
-    print(f"MAIL_DEFAULT_SENDER: {app.config.get('MAIL_DEFAULT_SENDER')}")
-    print(f"MAIL_PASSWORD: {'***' if app.config.get('MAIL_PASSWORD') else 'NOT SET'}")
+
+    print(
+        f"MAIL_SERVER: "
+        f"{app.config.get('MAIL_SERVER')}"
+    )
+
+    print(
+        f"MAIL_PORT: "
+        f"{app.config.get('MAIL_PORT')}"
+    )
+
+    print(
+        f"MAIL_USE_TLS: "
+        f"{app.config.get('MAIL_USE_TLS')}"
+    )
+
+    print(
+        f"MAIL_USERNAME: "
+        f"{app.config.get('MAIL_USERNAME')}"
+    )
+
+    print(
+        f"MAIL_DEFAULT_SENDER: "
+        f"{app.config.get('MAIL_DEFAULT_SENDER')}"
+    )
+
+    print(
+        "MAIL_PASSWORD: "
+        f"{'***' if app.config.get('MAIL_PASSWORD') else 'NOT SET'}"
+    )
+
     print("=" * 60)
-    
-    # Initialize authentication
+
+
+    # ========================================================
+    # INITIALIZE AUTHENTICATION
+    # ========================================================
+
     init_auth(app)
-    
-    # Register routes
+
+
+    # ========================================================
+    # REGISTER ROUTES
+    # ========================================================
+
     register_routes(app)
-    
-    # Register error handlers
+
+
+    # ========================================================
+    # REGISTER ERROR HANDLERS
+    # ========================================================
+
     register_error_handlers(app)
-    
+
+
+    # ========================================================
+    # RETURN FLASK APPLICATION
+    # ========================================================
+
     return app
+
