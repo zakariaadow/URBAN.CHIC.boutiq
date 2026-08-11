@@ -67,6 +67,10 @@ class Config:
             raise RuntimeError("SECRET_KEY is not configured in environment variables.")
         SECRET_KEY = "dev-secret-key-change-in-production"
         print("⚠️ Using development SECRET_KEY")
+    
+    # ✅ FIX: Ensure SECRET_KEY is a string
+    if isinstance(SECRET_KEY, bytes):
+        SECRET_KEY = SECRET_KEY.decode('utf-8')
 
     DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
     TESTING = os.environ.get("TESTING", "False").lower() == "true"
@@ -143,15 +147,20 @@ class Config:
     FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
     # ========================================================
-    # SESSION SETTINGS
+    # SESSION SETTINGS - ✅ FIXED
     # ========================================================
 
     SESSION_TYPE = "filesystem"
+    SESSION_COOKIE_NAME = "urban_chic_session"  # ✅ ADDED
     
     if IS_VERCEL or IS_RENDER:
         SESSION_FILE_DIR = "/tmp/flask_session"
     else:
         SESSION_FILE_DIR = os.path.join(BASE_DIR, "flask_session")
+
+    # ✅ Ensure the session directory exists
+    if not os.path.exists(SESSION_FILE_DIR):
+        os.makedirs(SESSION_FILE_DIR, exist_ok=True)
 
     SESSION_PERMANENT = True
     SESSION_USE_SIGNER = True
