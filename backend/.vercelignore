@@ -1,0 +1,11 @@
+backend/Pipfile
+backend/Pipfile.lock
+backend/.venv
+backend/__pycache__
+backend/*.pyc
+backend/instance/*.db
+backend/flask_session/*
+*.log
+.env
+.git
+node_modules
