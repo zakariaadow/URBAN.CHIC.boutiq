@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -58,14 +57,6 @@ class Config:
     # ========================================================
     # DATABASE SETTINGS
     # ========================================================
-    #
-    # DATABASE_URL should be defined in .env:
-    #
-    # mysql+pymysql://urban_chic_user:PASSWORD@localhost:3306/urban_chic_boutique
-    #
-    # We intentionally do NOT use the old SQLite database
-    # as the default application database.
-    #
 
     DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -86,10 +77,16 @@ class Config:
 
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_size": int(
-            os.environ.get("DB_POOL_SIZE", 10)
+            os.environ.get(
+                "DB_POOL_SIZE",
+                10
+            )
         ),
         "pool_recycle": int(
-            os.environ.get("DB_POOL_RECYCLE", 3600)
+            os.environ.get(
+                "DB_POOL_RECYCLE",
+                3600
+            )
         ),
         "pool_pre_ping": True
     }
@@ -181,10 +178,15 @@ class Config:
 
     SESSION_TYPE = "filesystem"
 
-    SESSION_FILE_DIR = os.path.join(
-        BASE_DIR,
-        "flask_session"
-    )
+    # Vercel's deployment filesystem is read-only.
+    # /tmp is writable in Vercel serverless functions.
+    if os.environ.get("VERCEL"):
+        SESSION_FILE_DIR = "/tmp/flask_session"
+    else:
+        SESSION_FILE_DIR = os.path.join(
+            BASE_DIR,
+            "flask_session"
+        )
 
     SESSION_PERMANENT = True
 
@@ -392,7 +394,9 @@ class ProductionConfig(Config):
 
     SESSION_COOKIE_SECURE = True
 
-    SESSION_TYPE = "redis"
+    # Keep filesystem sessions for now.
+    # The Vercel-specific path above redirects them to /tmp.
+    SESSION_TYPE = "filesystem"
 
     CSRF_ENABLED = True
 
