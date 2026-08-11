@@ -2,8 +2,15 @@ import os
 import sys
 from pathlib import Path
 
+# ✅ FORCE SESSION COOKIE NAME TO BE A STRING
+os.environ['SESSION_COOKIE_NAME'] = 'urban_chic_session'
+
 # Add backend to Python path
 sys.path.insert(0, str(Path(__file__).parent))
+
+# ✅ Force SECRET_KEY to be a string
+if os.environ.get('SECRET_KEY') and isinstance(os.environ.get('SECRET_KEY'), bytes):
+    os.environ['SECRET_KEY'] = os.environ['SECRET_KEY'].decode('utf-8')
 
 print(f"Environment: {'RENDER' if os.environ.get('RENDER') else 'VERCEL' if os.environ.get('VERCEL') else 'LOCAL'}")
 print(f"DATABASE_URL configured: {bool(os.environ.get('DATABASE_URL'))}")
@@ -14,7 +21,10 @@ try:
     app = create_app(env)
     print(f"✅ App '{app.name}' created successfully in {env} mode")
     
-    # ✅ ADD FALLBACK ROUTES (in case routes aren't registered)
+    # ✅ Ensure session cookie name is set on app
+    if 'SESSION_COOKIE_NAME' not in app.config:
+        app.config['SESSION_COOKIE_NAME'] = 'urban_chic_session'
+    
     @app.route('/')
     def root():
         from flask import jsonify
@@ -46,6 +56,7 @@ except Exception as e:
     from flask import Flask, jsonify
     app = Flask(__name__)
     app.secret_key = os.environ.get('SECRET_KEY', 'fallback-secret-key')
+    app.config['SESSION_COOKIE_NAME'] = 'urban_chic_session'
     
     @app.route('/')
     def root():

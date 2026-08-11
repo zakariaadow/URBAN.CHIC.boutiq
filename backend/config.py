@@ -150,27 +150,26 @@ class Config:
     # SESSION SETTINGS - ✅ COMPLETELY FIXED
     # ========================================================
 
-    # Use 'filesystem' for session storage (works on Render)
-    SESSION_TYPE = "filesystem"
+    # Use 'null' session type to disable sessions (bypasses cookie issues)
+    SESSION_TYPE = "null"
     SESSION_COOKIE_NAME = "urban_chic_session"
     
-    # Session file directory for Render/Vercel
-    if IS_VERCEL or IS_RENDER:
-        SESSION_FILE_DIR = "/tmp/flask_session"
-    else:
-        SESSION_FILE_DIR = os.path.join(BASE_DIR, "flask_session")
-
-    # ✅ Ensure the session directory exists
-    if not os.path.exists(SESSION_FILE_DIR):
-        os.makedirs(SESSION_FILE_DIR, exist_ok=True)
+    # If you need sessions, uncomment this and comment the null above:
+    # SESSION_TYPE = "filesystem"
+    # SESSION_FILE_DIR = "/tmp/flask_session" if (IS_VERCEL or IS_RENDER) else os.path.join(BASE_DIR, "flask_session")
+    # if not os.path.exists(SESSION_FILE_DIR):
+    #     os.makedirs(SESSION_FILE_DIR, exist_ok=True)
 
     SESSION_PERMANENT = True
     SESSION_USE_SIGNER = True
     SESSION_KEY_PREFIX = "urban_chic_"
+    
+    # Cookie settings
     SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "True" if not IS_LOCAL else "False").lower() == "true"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_COOKIE_DOMAIN = None  # Allow all domains
+    SESSION_COOKIE_DOMAIN = None
+    
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     # ========================================================
