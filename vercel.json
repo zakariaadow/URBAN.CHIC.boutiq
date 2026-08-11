@@ -11,6 +11,7 @@
       "src": "backend/vercel_app.py",
       "use": "@vercel/python",
       "config": {
+        "runtime": "python3.12",
         "installCommand": "pip install -r backend/requirements.txt"
       }
     }
@@ -26,7 +27,6 @@
     }
   ],
   "env": {
-    "FLASK_ENV": "production",
     "PYTHONPATH": "backend"
   }
 }
