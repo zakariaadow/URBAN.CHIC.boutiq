@@ -16,6 +16,7 @@ pillow = "*"
 requests = "*"
 flask-login = "*"
 python-dotenv = "*"
+pymysql = "*"
 
 [dev-packages]
 
