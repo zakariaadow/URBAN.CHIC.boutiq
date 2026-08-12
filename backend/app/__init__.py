@@ -114,11 +114,14 @@ def create_app(config_name=None):
     # INITIALIZE SERVER SESSION - ✅ FIXED
     # ========================================================
 
-    # Make sure session cookie name is set
-    if 'SESSION_COOKIE_NAME' not in app.config:
-        app.config['SESSION_COOKIE_NAME'] = 'urban_chic_session'
-    
-    server_session.init_app(app)
+    # Only initialize session if SESSION_TYPE is not 'null'
+    if app.config.get('SESSION_TYPE') != 'null':
+        # Make sure session cookie name is set
+        if 'SESSION_COOKIE_NAME' not in app.config:
+            app.config['SESSION_COOKIE_NAME'] = 'urban_chic_session'
+        server_session.init_app(app)
+    else:
+        print("⚠️ Sessions are disabled (SESSION_TYPE = 'null')")
 
 
     # ========================================================
