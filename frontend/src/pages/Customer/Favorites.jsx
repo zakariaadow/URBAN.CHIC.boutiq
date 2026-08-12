@@ -10,7 +10,7 @@ const Favorites = () => {
   const [favoriteStylists, setFavoriteStylists] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const api = api.create({
+  const customApi = customApi.create({
     baseURL: '/api',
     withCredentials: true
   });
@@ -23,8 +23,8 @@ const Favorites = () => {
     setLoading(true);
     try {
       const [servicesRes, stylistsRes] = await Promise.all([
-        api.get('/customer/favorites/services'),
-        api.get('/customer/favorites/stylists')
+        customApi.get('/customer/favorites/services'),
+        customApi.get('/customer/favorites/stylists')
       ]);
       setFavoriteServices(servicesRes.data?.data || servicesRes.data || []);
       setFavoriteStylists(stylistsRes.data?.data || stylistsRes.data || []);
@@ -38,7 +38,7 @@ const Favorites = () => {
 
   const removeFavoriteService = async (serviceId) => {
     try {
-      await api.post(`/customer/favorites/services/${serviceId}`);
+      await customApi.post(`/customer/favorites/services/${serviceId}`);
       setFavoriteServices(favoriteServices.filter(s => s.id !== serviceId));
       toast.success('Service removed from favorites');
     } catch (error) {
