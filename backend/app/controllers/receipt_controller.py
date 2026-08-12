@@ -3,9 +3,9 @@ from app.services.receipt_service import ReceiptService
 from app.services.email_service import EmailService
 from app.utils.response import APIResponse
 from app.models.receipt import Receipt
+from app.models.payment import Payment
 from app.models.user import User
 from app.models.customer import Customer
-from app.models.payment import Payment
 from app.extensions import db
 import io
 import logging
@@ -114,11 +114,20 @@ class ReceiptController:
     # ==================== DOWNLOAD RECEIPTS ====================
     @staticmethod
     def download_pdf(current_user, receipt_id):
-        """Download receipt PDF with logo"""
+        """Download receipt PDF with logo - ONLY if payment is verified"""
         try:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
+            
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be downloaded. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
             
             # Check permissions
             if current_user.role.name not in ['admin', 'finance']:
@@ -157,6 +166,15 @@ class ReceiptController:
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
             
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be downloaded. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
                 if not customer or receipt.customer_id != customer.id:
@@ -186,6 +204,15 @@ class ReceiptController:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
+            
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be previewed. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
             
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
@@ -217,6 +244,15 @@ class ReceiptController:
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
             
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be printed. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
                 if not customer or receipt.customer_id != customer.id:
@@ -244,11 +280,20 @@ class ReceiptController:
     # ==================== GENERATE RECEIPTS ====================
     @staticmethod
     def generate_receipt_with_logo(current_user, receipt_id):
-        """Generate and download receipt with logo"""
+        """Generate and download receipt with logo - ONLY if payment is verified"""
         try:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
+            
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be generated. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
             
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
@@ -280,6 +325,15 @@ class ReceiptController:
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
             
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be regenerated. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
                 if not customer or receipt.customer_id != customer.id:
@@ -309,11 +363,20 @@ class ReceiptController:
     # ==================== EMAIL METHODS ====================
     @staticmethod
     def send_email(current_user, receipt_id, data):
-        """Send receipt via email with logo"""
+        """Send receipt via email with logo - ONLY if payment is verified"""
         try:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
+            
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be sent. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
             
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
@@ -374,6 +437,15 @@ class ReceiptController:
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
             
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be resent. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
                 if not customer or receipt.customer_id != customer.id:
@@ -430,6 +502,15 @@ class ReceiptController:
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
             
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be sent via SMS. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
                 if not customer or receipt.customer_id != customer.id:
@@ -472,6 +553,15 @@ class ReceiptController:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
+            
+            # ✅ FIX: Check if payment is verified/approved
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be resent via SMS. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
             
             if current_user.role.name not in ['admin', 'finance']:
                 customer = Customer.query.filter_by(user_id=current_user.id).first()
@@ -521,6 +611,12 @@ class ReceiptController:
                 try:
                     receipt = Receipt.query.get(receipt_id)
                     if not receipt:
+                        continue
+                    
+                    # ✅ FIX: Check if payment is verified/approved
+                    payment = Payment.query.get(receipt.payment_id)
+                    if payment and payment.payment_status not in ['verified', 'paid']:
+                        results.append({'receipt_id': receipt_id, 'status': 'skipped', 'error': 'Payment not verified'})
                         continue
                     
                     customer = Customer.query.get(receipt.customer_id)
@@ -585,6 +681,12 @@ class ReceiptController:
                     if not receipt:
                         continue
                     
+                    # ✅ FIX: Check if payment is verified/approved
+                    payment = Payment.query.get(receipt.payment_id)
+                    if payment and payment.payment_status not in ['verified', 'paid']:
+                        results.append({'receipt_id': receipt_id, 'status': 'skipped', 'error': 'Payment not verified'})
+                        continue
+                    
                     customer = Customer.query.get(receipt.customer_id)
                     phone = None
                     if customer:
@@ -636,6 +738,11 @@ class ReceiptController:
                 for receipt_id in receipt_ids:
                     receipt = Receipt.query.get(receipt_id)
                     if not receipt:
+                        continue
+                    
+                    # ✅ FIX: Check if payment is verified/approved
+                    payment = Payment.query.get(receipt.payment_id)
+                    if payment and payment.payment_status not in ['verified', 'paid']:
                         continue
                     
                     if current_user.role.name not in ['admin', 'finance']:

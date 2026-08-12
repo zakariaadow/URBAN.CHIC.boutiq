@@ -26,6 +26,7 @@ const FinancePayments = () => {
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
   const [sendingReceipt, setSendingReceipt] = useState(false);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [summary, setSummary] = useState({
     total_payments: 0,
     total_amount: 0,
@@ -63,7 +64,7 @@ const FinancePayments = () => {
       
       const totalAmount = paymentsData.reduce((sum, p) => sum + (p.amount || 0), 0);
       const pendingCount = paymentsData.filter(p => p.payment_status === 'pending').length;
-      const completedCount = paymentsData.filter(p => p.payment_status === 'paid' || p.payment_status === 'completed').length;
+      const completedCount = paymentsData.filter(p => p.payment_status === 'paid' || p.payment_status === 'completed' || p.payment_status === 'verified').length;
       
       setSummary({
         total_payments: paymentsData.length,
@@ -80,19 +81,33 @@ const FinancePayments = () => {
     }
   };
 
+  // ✅ FINANCE VERIFIES PAYMENT - This approves payment for receipt generation
   const handleVerifyPayment = async (id) => {
+    if (!window.confirm('Verify this payment? This will approve it for receipt generation.')) return;
+    
+    setVerifyingPayment(true);
     try {
-      await api.post(`/api/finance/payments/${id}/verify`, {}, config);
-      toast.success('Payment verified successfully');
+      const response = await api.post(`/api/finance/payments/${id}/verify`, {}, config);
+      toast.success(response.data?.message || 'Payment verified successfully! Receipt can now be generated.');
       fetchPayments();
     } catch (error) {
       console.error('Error verifying payment:', error);
-      toast.error('Failed to verify payment');
+      toast.error(error.response?.data?.message || 'Failed to verify payment');
+    } finally {
+      setVerifyingPayment(false);
     }
   };
 
+  // ✅ FINANCE GENERATES RECEIPT - ONLY after payment is verified
   const handleGenerateReceipt = async (paymentId) => {
     try {
+      // First check if payment is verified
+      const payment = payments.find(p => p.id === paymentId);
+      if (payment && payment.payment_status !== 'verified' && payment.payment_status !== 'paid') {
+        toast.warning('Payment must be verified before generating receipt. Please verify first.');
+        return;
+      }
+
       const response = await api.get(`/api/finance/payments/${paymentId}/receipt`, config);
       const receipt = response.data?.data || response.data;
       if (receipt && receipt.id) {
@@ -104,7 +119,11 @@ const FinancePayments = () => {
       }
     } catch (error) {
       console.error('Error generating receipt:', error);
-      toast.error(error.response?.data?.message || 'Failed to generate receipt');
+      const errorMsg = error.response?.data?.message || 'Failed to generate receipt';
+      toast.error(errorMsg);
+      if (error.response?.status === 403) {
+        toast.warning('Payment needs finance verification first.');
+      }
     }
   };
 
@@ -175,6 +194,7 @@ const FinancePayments = () => {
     const colors = {
       completed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
       paid: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+      verified: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
       pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
       failed: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
       cancelled: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
@@ -251,6 +271,7 @@ const FinancePayments = () => {
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full sm:w-40 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
+              <option value="verified">Verified</option>
               <option value="paid">Paid</option>
               <option value="pending">Pending</option>
             </select>
@@ -288,8 +309,34 @@ const FinancePayments = () => {
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button onClick={() => { setSelectedPayment(payment); setShowDetails(true); }} className="p-1 text-blue-600 hover:text-blue-800" title="View"><FaEye /></button>
-                      {payment.payment_status === 'pending' && <button onClick={() => handleVerifyPayment(payment.id)} className="p-1 text-green-600 hover:text-green-800" title="Verify"><FaCheckCircle /></button>}
-                      {payment.payment_status === 'paid' && <button onClick={() => handleGenerateReceipt(payment.id)} className="p-1 text-purple-600 hover:text-purple-800" title="Receipt"><FaFileInvoice /></button>}
+                      
+                      {/* ✅ VERIFY BUTTON - Only show for pending payments */}
+                      {payment.payment_status === 'pending' && (
+                        <button 
+                          onClick={() => handleVerifyPayment(payment.id)} 
+                          disabled={verifyingPayment}
+                          className="p-1 text-green-600 hover:text-green-800 disabled:opacity-50" 
+                          title="Verify Payment"
+                        >
+                          {verifyingPayment ? <FaSpinner className="animate-spin" /> : <FaCheckCircle />}
+                        </button>
+                      )}
+                      
+                      {/* ✅ GENERATE RECEIPT - Only if payment is verified/paid */}
+                      {(payment.payment_status === 'verified' || payment.payment_status === 'paid' || payment.payment_status === 'completed') && (
+                        <button 
+                          onClick={() => handleGenerateReceipt(payment.id)} 
+                          className="p-1 text-purple-600 hover:text-purple-800" 
+                          title="Generate Receipt"
+                        >
+                          <FaFileInvoice />
+                        </button>
+                      )}
+                      
+                      {/* ✅ INDICATOR for pending verification */}
+                      {payment.payment_status === 'pending' && (
+                        <span className="text-xs text-yellow-600 dark:text-yellow-400 italic">Awaiting verification</span>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -307,7 +354,7 @@ const FinancePayments = () => {
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowReceiptModal(false)} />
           <div className="relative bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Receipt</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Official Receipt</h2>
               <button onClick={() => setShowReceiptModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"><FaTimes className="w-5 h-5 text-gray-500" /></button>
             </div>
 
@@ -317,6 +364,14 @@ const FinancePayments = () => {
                 <div><label className="text-sm text-gray-500">Customer:</label><p className="font-medium text-gray-900 mt-1">{receiptData.customer_name || 'N/A'}</p></div>
                 <div><label className="text-sm text-gray-500">Date:</label><p className="font-medium text-gray-900 mt-1">{formatDate(receiptData.receipt_date)}</p></div>
                 <div><label className="text-sm text-gray-500">Amount:</label><p className="text-xl font-bold text-green-600 mt-1">{formatCurrency(receiptData.amount_paid || receiptData.total || 0)}</p></div>
+              </div>
+              
+              {/* ✅ SHOW VERIFICATION STATUS */}
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  <FaCheckCircle className="inline mr-2" />
+                  Verified by Finance - Official Receipt
+                </p>
               </div>
             </div>
 

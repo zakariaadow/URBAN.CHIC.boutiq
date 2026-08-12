@@ -61,11 +61,19 @@ class ReceiptService:
     # ==================== CREATE RECEIPT ====================
     @staticmethod
     def create_receipt(payment_id):
-        """Create a receipt for a payment with multiple services"""
+        """Create a receipt for a payment with multiple services - ONLY after finance approval"""
         try:
             payment = Payment.query.get(payment_id)
             if not payment:
                 return {'error': 'Payment not found'}, 404
+            
+            # ✅ FIX: Payment must be verified/approved by finance
+            if payment.payment_status != 'verified' and payment.payment_status != 'paid':
+                return {
+                    'error': 'Payment must be verified by finance before generating receipt',
+                    'current_status': payment.payment_status,
+                    'required_status': 'verified or paid'
+                }, 403
             
             existing_receipt = Receipt.query.filter_by(payment_id=payment_id).first()
             if existing_receipt:
@@ -217,6 +225,11 @@ class ReceiptService:
             payment = Payment.query.get(receipt.payment_id)
             if not payment:
                 logger.error(f"Payment {receipt.payment_id} not found")
+                return None
+            
+            # ✅ FIX: Check if payment is verified/approved before generating PDF
+            if payment.payment_status not in ['verified', 'paid']:
+                logger.warning(f"Cannot generate PDF for unverified payment {payment.id}")
                 return None
             
             appointment = Appointment.query.get(receipt.appointment_id)
@@ -725,6 +738,10 @@ class ReceiptService:
             if not receipt:
                 return {'error': 'Receipt not found'}, 404
             
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return {'error': 'Cannot send unverified receipt'}, 403
+            
             if method == 'email':
                 receipt.is_emailed = True
                 receipt.sent_at = datetime.utcnow()
@@ -748,6 +765,10 @@ class ReceiptService:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return {'error': 'Receipt not found'}, 404
+            
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return {'error': 'Cannot send unverified receipt'}, 403
             
             customer = Customer.query.get(receipt.customer_id)
             if not customer:
@@ -779,6 +800,10 @@ class ReceiptService:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return {'error': 'Receipt not found'}, 404
+            
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return {'error': 'Cannot send unverified receipt'}, 403
             
             pdf_data = ReceiptService.generate_receipt_pdf(receipt_id)
             if not pdf_data:
@@ -826,6 +851,10 @@ class ReceiptService:
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return {'error': 'Receipt not found'}, 404
+            
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return {'error': 'Cannot regenerate unverified receipt'}, 403
             
             # Clear items to force regeneration
             receipt.items = None

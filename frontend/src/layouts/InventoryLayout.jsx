@@ -1,3 +1,4 @@
+import api from "../services/api";
 // src/layouts/InventoryLayout.jsx
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';

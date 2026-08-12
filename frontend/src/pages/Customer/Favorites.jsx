@@ -10,7 +10,7 @@ const Favorites = () => {
   const [favoriteStylists, setFavoriteStylists] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const customApi = customApi.create({
+  const customApi = api.create({
     baseURL: '/api',
     withCredentials: true
   });

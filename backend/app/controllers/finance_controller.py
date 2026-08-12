@@ -2,8 +2,14 @@ from flask import jsonify, request, send_file
 from app.services.finance_service import FinanceService
 from app.services.receipt_service import ReceiptService
 from app.utils.response import APIResponse
+from app.models.payment import Payment
+from app.models.receipt import Receipt
+from app.models.customer import Customer
+from app.models.user import User
+from app.extensions import db
 import logging
 import io
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -157,10 +163,10 @@ class FinanceController:
             logger.error(f"Error in get_payment_history: {str(e)}")
             return APIResponse.server_error(str(e))
     
-    # ==================== RECEIPTS WITH LOGO ====================
+    # ==================== RECEIPTS WITH LOGO - ✅ FIXED ====================
     @staticmethod
     def generate_receipt(current_user, payment_id):
-        """Generate receipt for a payment"""
+        """Generate receipt for a payment - ONLY if payment is verified"""
         try:
             from app.models.payment import Payment
             from app.models.receipt import Receipt
@@ -170,6 +176,14 @@ class FinanceController:
             payment = Payment.query.get(payment_id)
             if not payment:
                 return APIResponse.error('Payment not found', 404)
+            
+            # ✅ FIX: Payment must be verified by finance
+            if payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Payment must be verified by finance before generating receipt. '
+                    f'Current status: {payment.payment_status}',
+                    403
+                )
             
             # Check if receipt already exists
             receipt = Receipt.query.filter_by(payment_id=payment_id).first()
@@ -188,7 +202,7 @@ class FinanceController:
     
     @staticmethod
     def generate_receipt_with_logo(current_user, payment_id):
-        """Generate receipt with logo for ANY payment"""
+        """Generate receipt with logo - ONLY if payment is verified"""
         try:
             from app.models.payment import Payment
             from app.models.receipt import Receipt
@@ -198,6 +212,14 @@ class FinanceController:
             payment = Payment.query.get(payment_id)
             if not payment:
                 return APIResponse.error('Payment not found', 404)
+            
+            # ✅ FIX: Payment must be verified by finance
+            if payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Payment must be verified by finance before generating receipt with logo. '
+                    f'Current status: {payment.payment_status}',
+                    403
+                )
             
             # Check if receipt already exists
             receipt = Receipt.query.filter_by(payment_id=payment_id).first()
@@ -224,7 +246,7 @@ class FinanceController:
     
     @staticmethod
     def get_receipt(current_user, payment_id):
-        """Get receipt details for a payment - auto-generate if not exists"""
+        """Get receipt details for a payment - ONLY if payment is verified"""
         try:
             from app.models.receipt import Receipt
             from app.models.payment import Payment
@@ -235,15 +257,19 @@ class FinanceController:
             if not payment:
                 return APIResponse.error('Payment not found', 404)
             
+            # ✅ FIX: Only allow if payment is verified
+            if payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt not available. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             # Check if receipt exists
             receipt = Receipt.query.filter_by(payment_id=payment_id).first()
             
             # If no receipt, generate one
             if not receipt:
-                # Only generate if payment is paid
-                if payment.payment_status != 'paid':
-                    return APIResponse.error('Payment is not paid yet', 400)
-                
                 # Create receipt
                 result, status = ReceiptService.create_receipt(payment_id)
                 if status != 201:
@@ -260,13 +286,22 @@ class FinanceController:
     
     @staticmethod
     def get_receipt_by_id(current_user, receipt_id):
-        """Get receipt by receipt ID"""
+        """Get receipt by receipt ID - ONLY if payment is verified"""
         try:
             from app.models.receipt import Receipt
             
             receipt = Receipt.query.get(receipt_id)
             if not receipt:
                 return APIResponse.error('Receipt not found', 404)
+            
+            # ✅ FIX: Check if payment is verified
+            payment = Payment.query.get(receipt.payment_id)
+            if payment and payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt not available. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
             
             return APIResponse.success(receipt.to_dict(), 'Receipt retrieved successfully')
         except Exception as e:
@@ -275,7 +310,7 @@ class FinanceController:
     
     @staticmethod
     def download_receipt(current_user, payment_id):
-        """Download receipt PDF with logo - auto-generate if not exists"""
+        """Download receipt PDF with logo - ONLY if payment is verified"""
         try:
             from app.models.payment import Payment
             from app.models.receipt import Receipt
@@ -285,14 +320,19 @@ class FinanceController:
             if not payment:
                 return APIResponse.error('Payment not found', 404)
             
+            # ✅ FIX: Payment must be verified
+            if payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be downloaded. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             # Check if receipt exists
             receipt = Receipt.query.filter_by(payment_id=payment_id).first()
             
             # If no receipt, generate one
             if not receipt:
-                if payment.payment_status != 'paid':
-                    return APIResponse.error('Payment is not paid yet', 400)
-                
                 result, status = ReceiptService.create_receipt(payment_id)
                 if status != 201:
                     return APIResponse.error('Failed to create receipt', 400)
@@ -348,7 +388,7 @@ class FinanceController:
     
     @staticmethod
     def preview_receipt(current_user, payment_id):
-        """Preview receipt PDF with logo (inline display) - auto-generate if not exists"""
+        """Preview receipt PDF with logo - ONLY if payment is verified"""
         try:
             from app.models.payment import Payment
             from app.models.receipt import Receipt
@@ -358,14 +398,19 @@ class FinanceController:
             if not payment:
                 return APIResponse.error('Payment not found', 404)
             
+            # ✅ FIX: Payment must be verified
+            if payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be previewed. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             # Check if receipt exists
             receipt = Receipt.query.filter_by(payment_id=payment_id).first()
             
             # If no receipt, generate one
             if not receipt:
-                if payment.payment_status != 'paid':
-                    return APIResponse.error('Payment is not paid yet', 400)
-                
                 result, status = ReceiptService.create_receipt(payment_id)
                 if status != 201:
                     return APIResponse.error('Failed to create receipt', 400)
@@ -390,7 +435,7 @@ class FinanceController:
     
     @staticmethod
     def send_receipt(current_user, payment_id, data):
-        """Send receipt via email or SMS with logo - auto-generate if not exists"""
+        """Send receipt via email or SMS - ONLY if payment is verified"""
         try:
             from app.models.payment import Payment
             from app.models.receipt import Receipt
@@ -400,14 +445,19 @@ class FinanceController:
             if not payment:
                 return APIResponse.error('Payment not found', 404)
             
+            # ✅ FIX: Payment must be verified
+            if payment.payment_status not in ['verified', 'paid']:
+                return APIResponse.error(
+                    f'Receipt cannot be sent. Payment status: {payment.payment_status}. '
+                    'Please wait for finance verification.',
+                    403
+                )
+            
             # Check if receipt exists
             receipt = Receipt.query.filter_by(payment_id=payment_id).first()
             
             # If no receipt, generate one
             if not receipt:
-                if payment.payment_status != 'paid':
-                    return APIResponse.error('Payment is not paid yet', 400)
-                
                 result, status = ReceiptService.create_receipt(payment_id)
                 if status != 201:
                     return APIResponse.error('Failed to create receipt', 400)
