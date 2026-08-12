@@ -32,45 +32,54 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await api.post('/api/auth/login', {
+      // ✅ FIX: Use the API URL from environment
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      
+      console.log('🔍 Attempting login with:', { email: formData.email });
+      
+      const response = await api.post(`${API_URL}/api/auth/login`, {
         email: formData.email,
-        password: formData.password,
-        remember: formData.remember
-      }, {
-        withCredentials: true
+        password: formData.password
       });
 
-      console.log('Login Response:', response.data);
+      console.log('📦 Full Login Response:', response.data);
+
+      // Check if response has status 'success'
+      if (response.data.status !== 'success') {
+        throw new Error(response.data.message || 'Login failed');
+      }
 
       // Get data from response
       const data = response.data.data || response.data;
       const { user, token } = data;
       
+      console.log('👤 User data:', user);
+      console.log('🔑 Token:', token);
+
       if (!user) {
         throw new Error('No user data received');
       }
 
-      // Store token immediately
-      if (token && token !== 'null' && token !== 'undefined' && token !== '') {
-        localStorage.setItem('token', token);
-        console.log('Token stored:', token);
-      } else {
-        console.error('No valid token received');
-        toast.error('No valid token received');
-        setLoading(false);
-        return;
+      if (!token || token === 'null' || token === 'undefined') {
+        throw new Error('No valid token received');
       }
 
+      // Store token
+      localStorage.setItem('token', token);
+      
       // Store user data
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userRole', user.role || 'customer');
+      
+      // Get role from user object
+      const userRole = user.role || user.account_type || 'customer';
+      localStorage.setItem('userRole', userRole);
 
-      toast.success('Login successful!');
+      toast.success(response.data.message || 'Login successful!');
 
       // Determine redirect path based on role
       let path = '/customer/dashboard';
-      switch(user?.role) {
+      switch(userRole) {
         case 'admin':
           path = '/admin/dashboard';
           break;
@@ -93,13 +102,21 @@ const Login = () => {
           path = '/customer/dashboard';
       }
 
-      // IMMEDIATE REDIRECT - no delay
+      console.log(`🚀 Redirecting to: ${path}`);
       navigate(path);
 
     } catch (error) {
-      console.error('Login error:', error);
-      console.error('Error response:', error.response?.data);
-      const errorMessage = error.response?.data?.message || error.message || 'Invalid email or password';
+      console.error('❌ Login error:', error);
+      console.error('📄 Error response:', error.response?.data);
+      
+      // Show specific error messages
+      let errorMessage = 'Invalid email or password';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast.error(errorMessage);
       setLoading(false);
     }
@@ -225,9 +242,7 @@ const Login = () => {
               alt="Fashion showcase" 
               className="w-full h-full object-cover"
             />
-            {/* Optional overlay for better text visibility */}
             <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent"></div>
-            {/* Optional text overlay */}
             <div className="absolute bottom-8 left-8 right-8 text-white">
               <h2 className="text-2xl font-bold mb-2">Urban Chic Boutique</h2>
               <p className="text-sm opacity-90">Discover the latest fashion trends</p>
