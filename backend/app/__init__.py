@@ -125,10 +125,31 @@ def create_app(config_name=None):
 
 
     # ========================================================
-    # INITIALIZE CORS
+    # INITIALIZE CORS - ✅ EXPLICIT CONFIGURATION
     # ========================================================
 
-    cors.init_app(app)
+    # Get CORS origins from config
+    cors_origins = app.config.get('CORS_ORIGINS', ['*'])
+    
+    # Configure CORS with explicit settings
+    cors.init_app(
+        app,
+        origins=cors_origins,
+        supports_credentials=True,
+        allow_headers=['Content-Type', 'Authorization', 'Accept'],
+        methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
+    )
+    
+    # Add CORS headers after each request (fallback)
+    @app.after_request
+    def after_request(response):
+        origin = request.headers.get('Origin')
+        if origin and origin in cors_origins:
+            response.headers.add('Access-Control-Allow-Origin', origin)
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Accept')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS,PATCH')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
 
 
     # ========================================================

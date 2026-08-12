@@ -106,12 +106,12 @@ class Config:
     }
 
     # ========================================================
-    # CORS SETTINGS
+    # CORS SETTINGS - ✅ UPDATED FOR PRODUCTION
     # ========================================================
 
     CORS_ORIGINS = os.environ.get(
         "CORS_ORIGINS",
-        "http://localhost:3000,http://localhost:5173,http://localhost:5000"
+        "https://urban-chic-boutiq-real-estate-s-projects1.vercel.app,http://localhost:5173"
     ).split(',')
 
     # ========================================================
@@ -144,7 +144,7 @@ class Config:
     # FRONTEND URL
     # ========================================================
 
-    FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+    FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://urban-chic-boutiq-real-estate-s-projects1.vercel.app")
 
     # ========================================================
     # SESSION SETTINGS - ✅ DISABLED
