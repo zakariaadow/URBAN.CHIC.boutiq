@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import api from '../../services/api';
+import axios from 'axios';  // ✅ Use axios directly instead of api
 import { 
   FaUser, FaEnvelope, FaLock, FaPhone,
   FaSpinner, FaEye, FaEyeSlash, FaCheck,
@@ -52,6 +52,13 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // ✅ Validate all required fields
+    if (!formData.first_name || !formData.last_name || !formData.email || !formData.phone) {
+      toast.error('Please fill in all required fields (First Name, Last Name, Email, Phone)');
+      setStep(1);
+      return;
+    }
+    
     if (formData.password !== formData.confirmPassword) {
       toast.error(t('register.passwordMismatch') || 'Passwords do not match');
       return;
@@ -64,7 +71,7 @@ const Register = () => {
 
     setLoading(true);
     try {
-      // ✅ FIX: Get the API URL from environment variable
+      // ✅ Get the API URL from environment variable
       const API_URL = import.meta.env.VITE_API_URL || '';
       
       const safeUsername = formData.first_name 
@@ -75,14 +82,18 @@ const Register = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        phone: formData.phone,
+        phone: formData.phone || '0700000000',  // ✅ Always provide a phone number
         username: safeUsername,
         password: formData.password,
         account_type: formData.role || 'customer'
       };
 
-      // ✅ FIX: Use the API_URL in the request
-      const response = await api.post(`${API_URL}/api/auth/register`, registerData);
+      console.log('📤 Registration data:', registerData);  // ✅ Debug log
+
+      // ✅ Use axios with the full URL
+      const response = await axios.post(`${API_URL}/api/auth/register`, registerData);
+      
+      console.log('📥 Registration response:', response.data);  // ✅ Debug log
       
       if (response.data.status === 'success') {
         toast.success(response.data.message || 'Registration successful! Please login.');
@@ -95,7 +106,10 @@ const Register = () => {
       }
 
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('❌ Registration error:', error);
+      console.error('📄 Error response:', error.response?.data);
+      
+      // ✅ Show specific error message from backend
       const errorMsg = error.response?.data?.message || 'Registration failed. Please try again.';
       toast.error(errorMsg);
     } finally {
@@ -196,7 +210,7 @@ const Register = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Phone
+                        Phone <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
@@ -204,6 +218,8 @@ const Register = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        required
+                        placeholder="0700000000"
                       />
                     </div>
 
