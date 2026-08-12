@@ -8,7 +8,7 @@ import {
   FaArrowRight, FaUserPlus
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../../services/api';
 
 const RegisterForm = ({ onSuccess, redirectTo = '/login' }) => {
   const { t } = useTranslation();
@@ -92,10 +92,10 @@ const RegisterForm = ({ onSuccess, redirectTo = '/login' }) => {
         role: formData.role
       };
 
-      await axios.post('/api/auth/register', registerData);
+      await api.post('/api/auth/register', registerData);
       
       // Select account type
-      await axios.post('/api/auth/select-account-type', {
+      await api.post('/api/auth/select-account-type', {
         role: formData.role,
         branch: formData.branch,
         notes: formData.notes

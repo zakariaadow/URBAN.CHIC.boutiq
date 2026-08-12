@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaStore, 
   FaMapMarkerAlt, 
@@ -29,7 +29,7 @@ const Branches = () => {
   const fetchBranches = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/manager/branches', {
+      const response = await api.get('/api/manager/branches', {
         headers: { Authorization: `Bearer ${token}` }
       });
 

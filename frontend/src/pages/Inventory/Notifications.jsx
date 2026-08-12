@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, FaCheckCircle, FaTimesCircle, FaInfoCircle, 
   FaExclamationTriangle, FaSpinner, FaCheck, FaTrash 
@@ -26,7 +26,7 @@ const Notifications = () => {
       console.log("Fetching notifications from /api/inventory/notifications...");
       
       // ✅ SEND APPROPRIATE QUERY PARAMETERS
-      const response = await axios.get('/api/inventory/notifications', {
+      const response = await api.get('/api/inventory/notifications', {
         ...config,
         params: { 
           page: 1, 
@@ -90,7 +90,7 @@ const Notifications = () => {
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
 
-      await axios.post(`/api/inventory/notifications/${id}/read`, {}, config);
+      await api.post(`/api/inventory/notifications/${id}/read`, {}, config);
     } catch (error) {
       console.error('Error marking notification as read:', error);
       toast.error(t('notifications.markError') || 'Failed to mark as read');
@@ -109,7 +109,7 @@ const Notifications = () => {
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
 
-      await axios.post('/api/inventory/notifications/mark-all-read', {}, config);
+      await api.post('/api/inventory/notifications/mark-all-read', {}, config);
       toast.success(t('notifications.markAllSuccess') || 'All marked as read');
     } catch (error) {
       console.error('Error marking all as read:', error);
@@ -125,7 +125,7 @@ const Notifications = () => {
 
     try {
       setNotifications(prev => prev.filter(n => n.id !== id));
-      await axios.delete(`/api/inventory/notifications/${id}`, config);
+      await api.delete(`/api/inventory/notifications/${id}`, config);
       toast.success(t('notifications.deleteSuccess') || 'Notification deleted');
     } catch (error) {
       console.error('Error deleting notification:', error);

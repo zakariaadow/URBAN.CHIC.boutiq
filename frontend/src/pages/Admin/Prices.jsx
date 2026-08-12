@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaDollarSign, FaEdit, FaTrash, FaSearch,
   FaPlus, FaEye, FaToggleOn, FaToggleOff,
@@ -56,7 +56,7 @@ const Prices = () => {
       
       console.log('Fetching prices with params:', params);
       
-      const response = await axios.get('/api/admin/prices', { ...config, params });
+      const response = await api.get('/api/admin/prices', { ...config, params });
       
       // Handle different response structures
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
@@ -88,7 +88,7 @@ const Prices = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get('/api/admin/services', { 
+      const response = await api.get('/api/admin/services', { 
         ...config, 
         params: { is_active: 1 } 
       });
@@ -119,11 +119,11 @@ const Prices = () => {
 
       if (editingPrice) {
         endpoint = `/api/admin/prices/${editingPrice.id}`;
-        await axios.put(endpoint, submitData, config);
+        await api.put(endpoint, submitData, config);
         toast.success(t('admin.prices.updateSuccess'));
       } else {
         endpoint = '/api/admin/prices';
-        await axios.post(endpoint, submitData, config);
+        await api.post(endpoint, submitData, config);
         toast.success(t('admin.prices.createSuccess'));
       }
       
@@ -139,7 +139,7 @@ const Prices = () => {
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
-      await axios.put(`/api/admin/prices/${id}`, { 
+      await api.put(`/api/admin/prices/${id}`, { 
         is_active: !currentStatus 
       }, config);
       toast.success(t('admin.prices.statusUpdateSuccess'));
@@ -153,7 +153,7 @@ const Prices = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.prices.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/prices/${id}`, config);
+      await api.delete(`/api/admin/prices/${id}`, config);
       toast.success(t('admin.prices.deleteSuccess'));
       fetchPrices();
     } catch (error) {

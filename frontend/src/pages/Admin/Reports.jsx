@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaChartBar, FaChartLine, FaChartPie,
   FaDownload, FaPrint, FaSearch, FaFilter,
@@ -42,7 +42,7 @@ const Reports = () => {
         page: currentPage,
         limit: 10
       };
-      const response = await axios.get('/api/admin/reports/comprehensive', { ...config, params });
+      const response = await api.get('/api/admin/reports/comprehensive', { ...config, params });
       setReports(response.data.data || response.data || []);
       setTotalPages(response.data.totalPages || 1);
     } catch (error) {
@@ -55,7 +55,7 @@ const Reports = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', config);
+      const response = await api.get('/api/admin/branches', config);
       setBranches(response.data.data || response.data || []);
     } catch (error) {
       console.error('Error fetching branches:', error);
@@ -65,7 +65,7 @@ const Reports = () => {
   const generateReport = async () => {
     setGenerating(true);
     try {
-      const response = await axios.post('/api/admin/reports/export', {
+      const response = await api.post('/api/admin/reports/export', {
         type: reportType,
         period,
         branch_id: branchFilter !== 'all' ? branchFilter : undefined
@@ -82,7 +82,7 @@ const Reports = () => {
 
   const exportReport = async (format) => {
     try {
-      const response = await axios.get('/api/admin/reports/export', {
+      const response = await api.get('/api/admin/reports/export', {
         ...config,
         params: {
           type: reportType,

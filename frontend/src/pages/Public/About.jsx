@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUsers, FaAward, FaClock, FaHeart,
   FaCut, FaSpa, FaStar, FaCheckCircle,
@@ -22,8 +22,8 @@ const About = () => {
     setLoading(true);
     try {
       const [aboutRes, teamRes] = await Promise.all([
-        axios.get('/api/public/about'),
-        axios.get('/api/public/team')
+        api.get('/api/public/about'),
+        api.get('/api/public/team')
       ]);
 
       setAboutData(aboutRes.data);

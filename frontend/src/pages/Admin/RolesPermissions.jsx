@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaShieldAlt, FaUserCog, FaEdit, FaTrash,
   FaSearch, FaPlus, FaSpinner, FaTimes,
@@ -43,7 +43,7 @@ const RolesPermissions = () => {
     setLoading(true);
     try {
       const params = { page: currentPage, limit: 10 };
-      const response = await axios.get('/api/admin/roles', { ...config, params });
+      const response = await api.get('/api/admin/roles', { ...config, params });
       const data = response.data?.data || response.data || [];
       setRoles(Array.isArray(data) ? data : []);
       setTotalPages(response.data?.totalPages || 1);
@@ -58,7 +58,7 @@ const RolesPermissions = () => {
 
   const fetchPermissions = async () => {
     try {
-      const response = await axios.get('/api/admin/permissions', config);
+      const response = await api.get('/api/admin/permissions', config);
       const data = response.data?.data || response.data || [];
       setPermissions(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -72,10 +72,10 @@ const RolesPermissions = () => {
     setSubmitting(true);
     try {
       if (editingRole) {
-        await axios.put(`/api/admin/roles/${editingRole.id}`, formData, config);
+        await api.put(`/api/admin/roles/${editingRole.id}`, formData, config);
         toast.success(t('admin.roles.updateSuccess'));
       } else {
-        await axios.post('/api/admin/roles', formData, config);
+        await api.post('/api/admin/roles', formData, config);
         toast.success(t('admin.roles.createSuccess'));
       }
       resetForm();
@@ -90,7 +90,7 @@ const RolesPermissions = () => {
 
   const handleUpdatePermissions = async (roleId, permissions) => {
     try {
-      await axios.put(`/api/admin/roles/${roleId}/permissions`, { permissions }, config);
+      await api.put(`/api/admin/roles/${roleId}/permissions`, { permissions }, config);
       toast.success(t('admin.roles.permissionsUpdateSuccess'));
       fetchRoles();
     } catch (error) {
@@ -102,7 +102,7 @@ const RolesPermissions = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.roles.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/roles/${id}`, config);
+      await api.delete(`/api/admin/roles/${id}`, config);
       toast.success(t('admin.roles.deleteSuccess'));
       fetchRoles();
     } catch (error) {

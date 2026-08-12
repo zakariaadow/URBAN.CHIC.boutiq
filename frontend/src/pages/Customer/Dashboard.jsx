@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, FaClock, FaStar, FaHeart, FaBell,
   FaWallet, FaUser, FaSignOutAlt, FaClipboardList,
@@ -57,12 +57,12 @@ const CustomerDashboard = () => {
         notificationsRes,
         favoritesRes
       ] = await Promise.all([
-        axios.get('/api/customer/dashboard', { headers }),
-        axios.get('/api/customer/appointments/upcoming', { headers }),
-        axios.get('/api/customer/payments', { headers, params: { limit: 5 } }),
-        axios.get('/api/customer/loyalty/points', { headers }),
-        axios.get('/api/customer/notifications/unread', { headers }),
-        axios.get('/api/customer/favorites/services', { headers })
+        api.get('/api/customer/dashboard', { headers }),
+        api.get('/api/customer/appointments/upcoming', { headers }),
+        api.get('/api/customer/payments', { headers, params: { limit: 5 } }),
+        api.get('/api/customer/loyalty/points', { headers }),
+        api.get('/api/customer/notifications/unread', { headers }),
+        api.get('/api/customer/favorites/services', { headers })
       ]);
 
       // Extract data from response
@@ -118,7 +118,7 @@ const CustomerDashboard = () => {
       const headers = {
         Authorization: `Bearer ${token}`
       };
-      await axios.post(`/api/customer/appointments/${appointmentId}/cancel`, {}, { headers });
+      await api.post(`/api/customer/appointments/${appointmentId}/cancel`, {}, { headers });
       toast.success('Appointment cancelled successfully');
       fetchDashboardData();
       setActiveModal(null);

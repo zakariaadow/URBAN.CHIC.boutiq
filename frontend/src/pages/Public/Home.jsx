@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCut, FaSpa, FaPaintBrush, FaHands,
   FaStar, FaClock, FaMapMarkerAlt, FaPhone,
@@ -38,7 +38,9 @@ const Home = () => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/public/services');
+      // ✅ FIX: Use environment variable for API URL
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const response = await api.get(`${API_URL}/api/public/services`);
       const allServices = response.data?.data || response.data || [];
       setServices(allServices);
       

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, 
   FaSearch, 
@@ -45,7 +45,7 @@ const MyAppointments = () => {
         endpoint = '/api/stylist/appointments/history';
       }
 
-      const response = await axios.get(endpoint, {
+      const response = await api.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -63,7 +63,7 @@ const MyAppointments = () => {
 
   const acceptAppointment = async (appointmentId) => {
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/stylist/appointments/${appointmentId}/accept`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
@@ -81,7 +81,7 @@ const MyAppointments = () => {
 
   const completeAppointment = async (appointmentId) => {
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/stylist/appointments/${appointmentId}/complete`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }

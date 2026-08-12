@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaArrowUp, FaPlus, FaSpinner, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -13,7 +13,7 @@ const StockOut = () => {
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
   useEffect(() => {
-    axios.get('/api/inventory/products', config).then(res => {
+    api.get('/api/inventory/products', config).then(res => {
       setProducts(res.data?.data || []);
       setLoading(false);
     });
@@ -22,7 +22,7 @@ const StockOut = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/inventory/stock/out', formData, config);
+      await api.post('/api/inventory/stock/out', formData, config);
       toast.success('Stock Out recorded');
       setShowForm(false);
       setFormData({ product_id: '', quantity: '', reference: '', notes: '' });

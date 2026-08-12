@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaBuilding,
   FaEdit, FaTrash, FaSearch, FaFilter,
@@ -201,7 +201,7 @@ const Finance = () => {
   const fetchFinanceOfficers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         ...config,
         params: {
           role: 'finance',
@@ -224,7 +224,7 @@ const Finance = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', config);
+      const response = await api.get('/api/admin/branches', config);
       const data = response.data?.data || response.data || [];
       setBranches(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -239,11 +239,11 @@ const Finance = () => {
       let response;
       if (editingOfficer) {
         // UPDATE EXISTING
-        response = await axios.put(`/api/admin/users/${editingOfficer.id}`, formData, config);
+        response = await api.put(`/api/admin/users/${editingOfficer.id}`, formData, config);
         toast.success(t('admin.finance.updateSuccess') || 'Finance officer updated successfully');
       } else {
         // CREATE NEW
-        response = await axios.post('/api/admin/users', { ...formData, role: 'finance' }, config);
+        response = await api.post('/api/admin/users', { ...formData, role: 'finance' }, config);
         toast.success(t('admin.finance.addSuccess') || 'Finance officer added successfully');
       }
       closeForm();
@@ -259,7 +259,7 @@ const Finance = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     const action = currentStatus === 'active' ? 'deactivate' : 'activate';
     try {
-      await axios.post(`/api/admin/users/${id}/${action}`, {}, config);
+      await api.post(`/api/admin/users/${id}/${action}`, {}, config);
       toast.success(t(`admin.finance.${action}Success`) || `User ${action}d successfully`);
       fetchFinanceOfficers();
     } catch (error) {
@@ -273,7 +273,7 @@ const Finance = () => {
       return;
     }
     try {
-      await axios.delete(`/api/admin/users/${id}`, config);
+      await api.delete(`/api/admin/users/${id}`, config);
       toast.success(t('admin.finance.deleteSuccess') || 'Finance officer deleted successfully');
       fetchFinanceOfficers();
     } catch (error) {

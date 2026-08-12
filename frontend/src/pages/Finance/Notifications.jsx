@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, FaSearch, FaCheck, FaCheckDouble,
   FaSpinner, FaTimes, FaEye, FaTrash,
@@ -40,7 +40,7 @@ const FinanceNotifications = () => {
         read: readFilter !== 'all' ? (readFilter === 'read' ? 1 : 0) : undefined
       };
       
-      const response = await axios.get('/api/finance/notifications', { params });
+      const response = await api.get('/api/finance/notifications', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -65,7 +65,7 @@ const FinanceNotifications = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.post(`/api/finance/notifications/${id}/read`);
+      await api.post(`/api/finance/notifications/${id}/read`);
       toast.success('Notification marked as read');
       fetchNotifications();
     } catch (error) {
@@ -76,7 +76,7 @@ const FinanceNotifications = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await axios.post('/api/finance/notifications/read-all');
+      await api.post('/api/finance/notifications/read-all');
       toast.success('All notifications marked as read');
       fetchNotifications();
     } catch (error) {
@@ -88,7 +88,7 @@ const FinanceNotifications = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this notification?')) return;
     try {
-      await axios.delete(`/api/finance/notifications/${id}`);
+      await api.delete(`/api/finance/notifications/${id}`);
       toast.success('Notification deleted');
       fetchNotifications();
     } catch (error) {

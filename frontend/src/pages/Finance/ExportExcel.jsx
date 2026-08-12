@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaFileExcel, FaSpinner, FaTimes, FaCheck,
   FaCalendarDay, FaBuilding, FaFileInvoice,
@@ -58,7 +58,7 @@ const FinanceExportExcel = () => {
         params.end_date = endDate;
       }
 
-      const response = await axios.get('/api/finance/export/excel', {
+      const response = await api.get('/api/finance/export/excel', {
         params,
         responseType: 'blob'
       });

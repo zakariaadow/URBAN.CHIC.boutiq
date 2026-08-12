@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaMoneyBillWave, FaChartLine, FaCalendarDay,
   FaSearch, FaFilter, FaDownload, FaPrint,
@@ -55,10 +55,10 @@ const Sales = () => {
       // Try to fetch from appointments first (since sales come from appointments)
       let response;
       try {
-        response = await axios.get('/api/admin/appointments', { ...config, params });
+        response = await api.get('/api/admin/appointments', { ...config, params });
       } catch (error) {
         // Fallback to sales endpoint
-        response = await axios.get('/api/admin/reports/sales', { ...config, params });
+        response = await api.get('/api/admin/reports/sales', { ...config, params });
       }
       
       // Handle different response structures
@@ -119,7 +119,7 @@ const Sales = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', config);
+      const response = await api.get('/api/admin/branches', config);
       const branchesData = response.data?.data || response.data || [];
       setBranches(Array.isArray(branchesData) ? branchesData : []);
     } catch (error) {

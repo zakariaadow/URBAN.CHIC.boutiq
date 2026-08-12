@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCog, FaBell, FaLanguage, FaMoon, FaSun,
   FaLock, FaGlobe, FaPalette, FaSave,
@@ -45,7 +45,7 @@ const Settings = () => {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/profile', config);
+      const response = await api.get('/api/customer/profile', config);
       // In a real app, you'd have a settings endpoint
       // For now, we'll use the profile data and set defaults
       setSettings({
@@ -100,7 +100,7 @@ const Settings = () => {
     }
     
     try {
-      await axios.post('/api/auth/change-password', {
+      await api.post('/api/auth/change-password', {
         current_password: passwordData.current_password,
         new_password: passwordData.new_password
       }, config);

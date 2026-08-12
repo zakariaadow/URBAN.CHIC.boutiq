@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, FaUsers, FaClock, FaMoneyBillWave,
   FaUserPlus, FaBell, FaSearch, FaSpinner,
@@ -33,7 +33,7 @@ const ReceptionistDashboard = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/receptionist/dashboard');
+      const response = await api.get('/api/receptionist/dashboard');
       
       const data = response.data?.data || response.data || {};
       

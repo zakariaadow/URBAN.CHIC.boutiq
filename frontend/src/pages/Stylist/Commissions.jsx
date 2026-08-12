@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaChartLine, 
   FaMoneyBillWave,
@@ -30,7 +30,7 @@ const Commissions = () => {
   const fetchCommissions = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/stylist/commissions?period=${period}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );

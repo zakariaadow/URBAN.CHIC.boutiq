@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { toast } from 'react-toastify';
 import { 
   FaCalendarCheck, FaClock, FaUser, FaStore, FaTag, 
@@ -42,7 +42,7 @@ const MyAppointments = () => {
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/appointments/upcoming', {
+      const response = await api.get('/api/customer/appointments/upcoming', {
         ...config,
         params: { 
           page: currentPage, 
@@ -72,7 +72,7 @@ const MyAppointments = () => {
 
   const fetchPaymentMethods = async () => {
     try {
-      const response = await axios.get('/api/customer/payments/methods', config);
+      const response = await api.get('/api/customer/payments/methods', config);
       
       let methods = [];
       if (response.data?.data) {
@@ -188,7 +188,7 @@ const MyAppointments = () => {
 
     setProcessingPayment(true);
     try {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/customer/payments',
         {
           appointment_id: paymentData.appointment_id,
@@ -218,7 +218,7 @@ const MyAppointments = () => {
     if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
     
     try {
-      await axios.post(
+      await api.post(
         `/api/customer/appointments/${appointmentId}/cancel`,
         {},
         config

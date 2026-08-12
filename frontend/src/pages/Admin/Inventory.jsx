@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaBuilding,
   FaEdit, FaTrash, FaSearch, FaFilter,
@@ -45,7 +45,7 @@ const Inventory = () => {
   const fetchInventoryOfficers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         ...config,
         params: {
           role: 'inventory',
@@ -68,7 +68,7 @@ const Inventory = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', config);
+      const response = await api.get('/api/admin/branches', config);
       const data = response.data?.data || response.data || [];
       setBranches(Array.isArray(data) ? data : []);
     } catch (error) {

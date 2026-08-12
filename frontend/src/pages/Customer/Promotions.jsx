@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaPercentage, FaGift, FaTag, FaClock,
   FaCalendarDay, FaChevronRight, FaCopy,
@@ -26,7 +26,7 @@ const Promotions = () => {
   const fetchPromotions = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/public/promotions', {
+      const response = await api.get('/api/public/promotions', {
         ...config,
         params: { active: true }
       });

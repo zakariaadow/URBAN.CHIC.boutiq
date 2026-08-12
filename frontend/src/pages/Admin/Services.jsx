@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCut, FaEdit, FaTrash, FaSearch,
   FaPlus, FaEye, FaToggleOn, FaToggleOff,
@@ -51,7 +51,7 @@ const Services = () => {
         is_active: statusFilter !== 'all' ? (statusFilter === 'active' ? 1 : 0) : undefined,
         category_id: categoryFilter !== 'all' ? categoryFilter : undefined
       };
-      const response = await axios.get('/api/admin/services', { ...config, params });
+      const response = await api.get('/api/admin/services', { ...config, params });
       const data = response.data?.data || response.data || [];
       setServices(Array.isArray(data) ? data : []);
       setTotalPages(response.data?.totalPages || 1);
@@ -66,7 +66,7 @@ const Services = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/admin/categories', config);
+      const response = await api.get('/api/admin/categories', config);
       const data = response.data?.data || response.data || [];
       setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -86,10 +86,10 @@ const Services = () => {
       };
       
       if (editingService) {
-        await axios.put(`/api/admin/services/${editingService.id}`, submitData, config);
+        await api.put(`/api/admin/services/${editingService.id}`, submitData, config);
         toast.success(t('admin.services.updateSuccess'));
       } else {
-        await axios.post('/api/admin/services', submitData, config);
+        await api.post('/api/admin/services', submitData, config);
         toast.success(t('admin.services.createSuccess'));
       }
       resetForm();
@@ -104,7 +104,7 @@ const Services = () => {
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
-      await axios.post(`/api/admin/services/${id}/toggle`, {}, config);
+      await api.post(`/api/admin/services/${id}/toggle`, {}, config);
       toast.success(t('admin.services.statusUpdateSuccess'));
       fetchServices();
     } catch (error) {
@@ -116,7 +116,7 @@ const Services = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.services.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/services/${id}`, config);
+      await api.delete(`/api/admin/services/${id}`, config);
       toast.success(t('admin.services.deleteSuccess'));
       fetchServices();
     } catch (error) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaCamera,
   FaSave, FaSpinner, FaTimes, FaLock,
@@ -37,7 +37,7 @@ const ReceptionistProfile = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/auth/profile', config);
+      const response = await api.get('/api/auth/profile', config);
       setProfile(response.data);
       setFormData({
         name: response.data.name || '',
@@ -62,7 +62,7 @@ const ReceptionistProfile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      await axios.put('/api/auth/profile', {
+      await api.put('/api/auth/profile', {
         name: formData.name,
         phone: formData.phone
       }, config);
@@ -70,7 +70,7 @@ const ReceptionistProfile = () => {
       if (photo) {
         const formDataPhoto = new FormData();
         formDataPhoto.append('photo', photo);
-        await axios.post('/api/receptionist/profile/photo', formDataPhoto, {
+        await api.post('/api/receptionist/profile/photo', formDataPhoto, {
           ...config,
           headers: { ...config.headers, 'Content-Type': 'multipart/form-data' }
         });
@@ -95,7 +95,7 @@ const ReceptionistProfile = () => {
     
     setSaving(true);
     try {
-      await axios.post('/api/auth/change-password', {
+      await api.post('/api/auth/change-password', {
         current_password: formData.current_password,
         new_password: formData.new_password
       }, config);

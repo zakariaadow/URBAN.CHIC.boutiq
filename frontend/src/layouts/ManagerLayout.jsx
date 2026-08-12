@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { 
   FaHome,
   FaCalendarCheck, 
@@ -66,7 +65,7 @@ const ManagerLayout = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get('/api/auth/profile', {
+      const response = await api.get('/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.status === 'success') {
@@ -81,7 +80,7 @@ const ManagerLayout = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/manager/dashboard', {
+      const response = await api.get('/api/manager/dashboard', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.status === 'success') {

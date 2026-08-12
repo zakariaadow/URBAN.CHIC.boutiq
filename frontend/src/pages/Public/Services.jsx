@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCut, FaSpa, FaPaintBrush, FaHands,
   FaStar, FaClock, FaSearch, FaFilter,
@@ -61,7 +61,7 @@ const Services = () => {
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/public/services');
+      const response = await api.get('/api/public/services');
       const servicesData = response.data.data || response.data || [];
       setServices(servicesData);
       

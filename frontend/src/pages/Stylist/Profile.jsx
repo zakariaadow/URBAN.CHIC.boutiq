@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUserCog, 
   FaUser,
@@ -40,7 +40,7 @@ const StylistProfile = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/auth/profile', {
+      const response = await api.get('/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -57,7 +57,7 @@ const StylistProfile = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         '/api/auth/profile',
         user,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -81,7 +81,7 @@ const StylistProfile = () => {
     }
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/auth/change-password',
         {
           current_password: passwordData.current_password,

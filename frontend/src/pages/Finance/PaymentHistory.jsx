@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCreditCard, FaSearch, FaFilter, FaEye,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -38,7 +38,7 @@ const FinancePaymentHistory = () => {
         payment_method: methodFilter !== 'all' ? methodFilter : undefined
       };
       
-      const response = await axios.get('/api/finance/payments', { params });
+      const response = await api.get('/api/finance/payments', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {

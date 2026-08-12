@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, FaCalendarWeek, FaUsers, FaMoneyBillWave, 
   FaClock, FaExclamationTriangle, FaSpinner, FaUserClock, FaBoxOpen
@@ -33,7 +33,7 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/manager/dashboard', config);
+      const response = await api.get('/api/manager/dashboard', config);
       
       // Handle nested data structure (APIResponse.data.data or just data)
       const data = response.data?.data || response.data || {};

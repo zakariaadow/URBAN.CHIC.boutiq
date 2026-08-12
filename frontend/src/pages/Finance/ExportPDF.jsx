@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaFilePdf, FaSpinner, FaTimes, FaCheck,
   FaCalendarDay, FaBuilding, FaFileInvoice,
@@ -56,7 +56,7 @@ const FinanceExportPDF = () => {
         params.end_date = endDate;
       }
 
-      const response = await axios.get('/api/finance/export/pdf', {
+      const response = await api.get('/api/finance/export/pdf', {
         params,
         responseType: 'blob'
       });
@@ -93,7 +93,7 @@ const FinanceExportPDF = () => {
         params.end_date = endDate;
       }
 
-      const response = await axios.get('/api/finance/export/preview', { params });
+      const response = await api.get('/api/finance/export/preview', { params });
       setPreviewData(response.data?.data || {});
       setShowPreview(true);
     } catch (error) {

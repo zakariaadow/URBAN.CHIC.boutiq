@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { toast } from 'react-toastify';
 
 const Attendance = () => {
@@ -9,7 +9,7 @@ const Attendance = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try { await axios.post('/api/manager/staff/attendance', form, config); toast.success('Attendance recorded'); } 
+    try { await api.post('/api/manager/staff/attendance', form, config); toast.success('Attendance recorded'); } 
     catch { toast.error('Failed'); }
   };
 

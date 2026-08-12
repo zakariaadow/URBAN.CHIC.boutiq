@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaClock, 
   FaCalendarAlt,
@@ -27,7 +27,7 @@ const Schedule = () => {
     setLoading(true);
     try {
       const dateStr = selectedDate.toISOString().split('T')[0];
-      const response = await axios.get(
+      const response = await api.get(
         `/api/stylist/schedule?date=${dateStr}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );

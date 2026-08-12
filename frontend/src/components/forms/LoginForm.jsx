@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaSpinner, FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../../services/api';
 
 const LoginForm = ({ onSuccess, redirectTo = '/dashboard' }) => {
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ const LoginForm = ({ onSuccess, redirectTo = '/dashboard' }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/auth/login', {
+      const response = await api.post('/api/auth/login', {
         email: formData.email,
         password: formData.password
       });

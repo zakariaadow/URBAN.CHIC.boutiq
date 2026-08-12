@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCamera, FaTimes, FaHeart,
   FaArrowLeft, FaArrowRight, FaInstagram,
@@ -53,7 +53,7 @@ const Gallery = () => {
     try {
       setLoading(true);
       // Try to fetch from API, but fallback to local images if it fails
-      const response = await axios.get('/api/public/gallery').catch(() => null);
+      const response = await api.get('/api/public/gallery').catch(() => null);
       
       if (response?.data?.data?.length > 0) {
         const data = response.data.data;

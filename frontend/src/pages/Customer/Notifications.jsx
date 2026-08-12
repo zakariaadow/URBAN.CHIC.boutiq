@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, FaCheckCircle, FaTimesCircle, FaClock,
   FaCalendarCheck, FaMoneyBillWave, FaStar,
@@ -30,7 +30,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/notifications', {
+      const response = await api.get('/api/customer/notifications', {
         ...config,
         params: { 
           page: currentPage, 
@@ -63,7 +63,7 @@ const Notifications = () => {
 
   const fetchUnreadCount = async () => {
     try {
-      const response = await axios.get('/api/customer/notifications/unread', config);
+      const response = await api.get('/api/customer/notifications/unread', config);
       const count = response.data?.data?.length || response.data?.length || 0;
       setUnreadCount(count);
     } catch (error) {
@@ -73,7 +73,7 @@ const Notifications = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      await axios.post(`/api/customer/notifications/${notificationId}/read`, {}, config);
+      await api.post(`/api/customer/notifications/${notificationId}/read`, {}, config);
       setNotifications(prev => 
         prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
       );
@@ -87,7 +87,7 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await axios.post('/api/customer/notifications/read-all', {}, config);
+      await api.post('/api/customer/notifications/read-all', {}, config);
       setNotifications(prev => 
         prev.map(n => ({ ...n, is_read: true }))
       );
@@ -101,7 +101,7 @@ const Notifications = () => {
 
   const deleteNotification = async (notificationId) => {
     try {
-      await axios.delete(`/api/customer/notifications/${notificationId}`, config);
+      await api.delete(`/api/customer/notifications/${notificationId}`, config);
       setNotifications(prev => prev.filter(n => n.id !== notificationId));
       toast.success(t('notifications.deleted'));
     } catch (error) {

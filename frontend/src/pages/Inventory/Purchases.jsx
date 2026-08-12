@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaShoppingCart, FaPlus, FaSpinner, FaTimes, FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -33,7 +33,7 @@ const Purchases = () => {
   const fetchPurchases = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/inventory/purchases', config);
+      const response = await api.get('/api/inventory/purchases', config);
       
       console.log("Purchases API Response:", response.data); // Debug log
 
@@ -70,7 +70,7 @@ const Purchases = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await axios.get('/api/inventory/suppliers', config);
+      const response = await api.get('/api/inventory/suppliers', config);
       
       // ✅ Extract suppliers similarly
       let fetchedSuppliers = [];
@@ -94,7 +94,7 @@ const Purchases = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('/api/inventory/purchases', formData, config);
+      await api.post('/api/inventory/purchases', formData, config);
       toast.success('Purchase recorded successfully');
       setShowForm(false);
       setFormData({

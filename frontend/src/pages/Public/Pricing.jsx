@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCheckCircle, FaClock, FaTag, FaStar,
   FaArrowRight, FaFilter, FaSearch,
@@ -46,7 +46,7 @@ const Pricing = () => {
   const fetchPricing = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/public/pricing');
+      const response = await api.get('/api/public/pricing');
       let data = response.data.data || response.data || servicesData;
       
       // Fix 2: Handle grouped API response if present

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUsers, FaSearch, FaUser, FaEnvelope, FaPhone,
   FaCalendarDay, FaEye, FaSpinner, FaPlus,
@@ -12,7 +12,7 @@ import {
 import { toast } from 'react-toastify';
 
 // Create axios instance with session-based authentication
-const api = axios.create({
+const customApi = api.create({
   baseURL: '/api',
   withCredentials: true,
   headers: {
@@ -55,7 +55,7 @@ const ReceptionistCustomers = () => {
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/receptionist/customers');
+      const response = await customApi.get('/receptionist/customers');
       
       let customerData = [];
       if (response.data?.data?.items) {
@@ -95,11 +95,11 @@ const ReceptionistCustomers = () => {
       let response;
       if (isEditing && selectedCustomer) {
         // Update existing customer
-        response = await api.put(`/admin/users/${selectedCustomer.id}`, payload);
+        response = await customApi.put(`/admin/users/${selectedCustomer.id}`, payload);
         toast.success('Customer updated successfully');
       } else {
         // Add new customer
-        response = await api.post('/admin/users', payload);
+        response = await customApi.post('/admin/users', payload);
         toast.success('Customer added successfully');
       }
       
@@ -129,11 +129,11 @@ const ReceptionistCustomers = () => {
   const fetchCustomerDetails = async (customerId) => {
     try {
       // Fetch customer finance info
-      const financeRes = await api.get(`/admin/customers/${customerId}/finance`);
+      const financeRes = await customApi.get(`/admin/customers/${customerId}/finance`);
       setCustomerFinance(financeRes.data?.data || financeRes.data || null);
       
       // Fetch customer appointments
-      const appointmentsRes = await api.get('/admin/appointments', {
+      const appointmentsRes = await customApi.get('/admin/appointments', {
         params: { customer_id: customerId, limit: 10 }
       });
       const appointmentsData = appointmentsRes.data?.data?.items || 
@@ -142,7 +142,7 @@ const ReceptionistCustomers = () => {
       setCustomerAppointments(Array.isArray(appointmentsData) ? appointmentsData : []);
       
       // Fetch customer reviews
-      const reviewsRes = await api.get(`/admin/reviews`, {
+      const reviewsRes = await customApi.get(`/admin/reviews`, {
         params: { customer_id: customerId, limit: 5 }
       });
       const reviewsData = reviewsRes.data?.data?.items || 
@@ -187,7 +187,7 @@ const ReceptionistCustomers = () => {
     }
     
     try {
-      await api.delete(`/admin/users/${id}`);
+      await customApi.delete(`/admin/users/${id}`);
       toast.success('Customer deleted successfully');
       setDeleteConfirm(null);
       fetchCustomers();

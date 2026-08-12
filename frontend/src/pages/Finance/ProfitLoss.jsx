@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaChartLine, FaSearch, FaFilter, FaCalendarDay,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -54,7 +54,7 @@ const FinanceProfitLoss = () => {
         branch_id: branchFilter !== 'all' ? branchFilter : undefined
       };
 
-      const response = await axios.get('/api/finance/reports/profit-loss', { params });
+      const response = await api.get('/api/finance/reports/profit-loss', { params });
       setReportData(response.data?.data || {});
       
     } catch (error) {
@@ -67,7 +67,7 @@ const FinanceProfitLoss = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/finance/branches');
+      const response = await api.get('/api/finance/branches');
       const data = response.data?.data || response.data || [];
       setBranches(Array.isArray(data) ? data : []);
     } catch (error) {

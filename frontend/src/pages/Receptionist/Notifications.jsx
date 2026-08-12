@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, FaSearch, FaCheck, FaCheckDouble,
   FaSpinner, FaTimes, FaEye, FaTrash,
@@ -38,7 +38,7 @@ const ReceptionistNotifications = () => {
         read: readFilter !== 'all' ? (readFilter === 'read' ? 1 : 0) : undefined
       };
       
-      const response = await axios.get('/api/receptionist/notifications', { params });
+      const response = await api.get('/api/receptionist/notifications', { params });
       
       // Handle different response structures
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
@@ -81,7 +81,7 @@ const ReceptionistNotifications = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.put(`/api/receptionist/notifications/${id}/read`, {});
+      await api.put(`/api/receptionist/notifications/${id}/read`, {});
       toast.success('Notification marked as read');
       fetchNotifications();
     } catch (error) {
@@ -92,7 +92,7 @@ const ReceptionistNotifications = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await axios.put('/api/receptionist/notifications/read-all', {});
+      await api.put('/api/receptionist/notifications/read-all', {});
       toast.success('All notifications marked as read');
       fetchNotifications();
     } catch (error) {
@@ -104,7 +104,7 @@ const ReceptionistNotifications = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this notification?')) return;
     try {
-      await axios.delete(`/api/receptionist/notifications/${id}`);
+      await api.delete(`/api/receptionist/notifications/${id}`);
       toast.success('Notification deleted');
       fetchNotifications();
     } catch (error) {

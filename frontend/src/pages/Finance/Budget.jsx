@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaWallet, FaSearch, FaPlus, FaEdit, FaTrash,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -52,7 +52,7 @@ const FinanceBudget = () => {
         category: categoryFilter !== 'all' ? categoryFilter : undefined
       };
       
-      const response = await axios.get('/api/finance/budget', { params });
+      const response = await api.get('/api/finance/budget', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -75,7 +75,7 @@ const FinanceBudget = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/finance/branches');
+      const response = await api.get('/api/finance/branches');
       const data = response.data?.data || response.data || [];
       setBranches(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -100,10 +100,10 @@ const FinanceBudget = () => {
       };
 
       if (editingBudget) {
-        await axios.put(`/api/finance/budget/${editingBudget.id}`, submitData);
+        await api.put(`/api/finance/budget/${editingBudget.id}`, submitData);
         toast.success('Budget updated successfully');
       } else {
-        await axios.post('/api/finance/budget', submitData);
+        await api.post('/api/finance/budget', submitData);
         toast.success('Budget created successfully');
       }
       
@@ -120,7 +120,7 @@ const FinanceBudget = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this budget?')) return;
     try {
-      await axios.delete(`/api/finance/budget/${id}`);
+      await api.delete(`/api/finance/budget/${id}`);
       toast.success('Budget deleted successfully');
       fetchBudgets();
     } catch (error) {

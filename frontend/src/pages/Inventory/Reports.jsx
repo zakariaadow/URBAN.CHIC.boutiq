@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaFileAlt, FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -18,7 +18,7 @@ const Reports = () => {
       else if (reportType === 'movement') endpoint = '/api/inventory/reports/movement';
       else if (reportType === 'summary') endpoint = '/api/inventory/reports/summary';
 
-      const response = await axios.get(endpoint, config);
+      const response = await api.get(endpoint, config);
       console.log('Report Data:', response.data);
       toast.success('Report generated successfully');
     } catch (error) {
@@ -30,7 +30,7 @@ const Reports = () => {
 
   const exportReport = async () => {
     try {
-      const response = await axios.post('/api/inventory/reports/export', { format: 'excel' }, { ...config, responseType: 'blob' });
+      const response = await api.post('/api/inventory/reports/export', { format: 'excel' }, { ...config, responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;

@@ -15,12 +15,9 @@ export default defineConfig({
       '@components': path.resolve(__dirname, './src/components'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@layouts': path.resolve(__dirname, './src/layouts'),
-      '@assets': path.resolve(__dirname, './src/assets'),  // Add this alias
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@store': path.resolve(__dirname, './src/store'),
+      '@assets': path.resolve(__dirname, './src/assets'),
       '@i18n': path.resolve(__dirname, './src/i18n'),
+      '@services': path.resolve(__dirname, './src/services'),  // ✅ Add this
     },
   },
   server: {
@@ -28,7 +25,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',  // ✅ CHANGED FROM 127.0.0.1 TO localhost
+        target: process.env.VITE_API_URL || 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },
@@ -46,8 +43,12 @@ export default defineConfig({
         },
       },
     },
+    chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'axios'],
+  },
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || ''),
   },
 });

@@ -6,11 +6,11 @@ import App from './App';
 import i18n from './i18n/i18n';
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import api from './services/api';  // ✅ FIXED: Changed from '../services/api' to './services/api'
 
 // ============ AXIOS INTERCEPTORS ============
 // Request interceptor - Add token to all requests
-axios.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     // Only add token if it exists and is valid (not 'null', 'undefined', or empty)
@@ -28,7 +28,7 @@ axios.interceptors.request.use(
 );
 
 // Response interceptor - Handle 401 errors
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
   (error) => {
     // If unauthorized (401), clear token and redirect to login

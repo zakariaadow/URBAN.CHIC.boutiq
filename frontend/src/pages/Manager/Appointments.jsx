@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, 
   FaSearch, 
@@ -53,7 +53,7 @@ const Appointments = () => {
         )
       });
 
-      const response = await axios.get(
+      const response = await api.get(
         `/api/manager/appointments?${params.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBuilding, FaMapMarkerAlt, FaPhone, FaEnvelope,
   FaEdit, FaTrash, FaSearch, FaFilter,
@@ -57,7 +57,7 @@ const Branches = () => {
         is_active: statusFilter !== 'all' ? (statusFilter === 'active' ? 1 : 0) : undefined
       };
       
-      const response = await axios.get('/api/admin/branches', { params });
+      const response = await api.get('/api/admin/branches', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -98,11 +98,11 @@ const Branches = () => {
 
       if (editingBranch) {
         endpoint = `/api/admin/branches/${editingBranch.id}`;
-        await axios.put(endpoint, submitData);
+        await api.put(endpoint, submitData);
         toast.success(t('admin.branches.updateSuccess'));
       } else {
         endpoint = '/api/admin/branches';
-        await axios.post(endpoint, submitData);
+        await api.post(endpoint, submitData);
         toast.success(t('admin.branches.createSuccess'));
       }
       
@@ -119,7 +119,7 @@ const Branches = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === true || currentStatus === 1 ? false : true;
-      await axios.put(`/api/admin/branches/${id}`, { is_active: newStatus });
+      await api.put(`/api/admin/branches/${id}`, { is_active: newStatus });
       toast.success(t('admin.branches.statusUpdateSuccess'));
       fetchBranches();
     } catch (error) {
@@ -131,7 +131,7 @@ const Branches = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.branches.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/branches/${id}`);
+      await api.delete(`/api/admin/branches/${id}`);
       toast.success(t('admin.branches.deleteSuccess'));
       fetchBranches();
     } catch (error) {

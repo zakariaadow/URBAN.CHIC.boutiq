@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, FaSearch, FaPaperPlane, FaCalendarDay,
   FaUser, FaSpinner, FaCheck, FaClock
@@ -24,7 +24,7 @@ const ReceptionistReminders = () => {
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/receptionist/appointments/today', config);
+      const response = await api.get('/api/receptionist/appointments/today', config);
       const data = response.data?.data || response.data || [];
       setAppointments(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -39,7 +39,7 @@ const ReceptionistReminders = () => {
   const handleSendReminder = async (id) => {
     setSending(true);
     try {
-      await axios.post(`/api/receptionist/appointments/${id}/reminder`, {}, config);
+      await api.post(`/api/receptionist/appointments/${id}/reminder`, {}, config);
       toast.success('Reminder sent successfully');
       fetchAppointments();
     } catch (error) {

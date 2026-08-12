@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from '@services/api'; // ✅ Add API import
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
@@ -109,9 +110,7 @@ import InventoryReports from './pages/Inventory/Reports';
 import InventoryProfile from './pages/Inventory/Profile';
 import InventoryNotifications from './pages/Inventory/Notifications';
 
-// ============================================================
-// ✅ MANAGER PAGES
-// ============================================================
+// Manager Pages
 import ManagerDashboard from './pages/Manager/Dashboard';
 import ManagerAppointments from './pages/Manager/Appointments';
 import ManagerStaff from './pages/Manager/Staff';
@@ -125,9 +124,7 @@ import ManagerNotifications from './pages/Manager/Notifications';
 import ManagerBranches from './pages/Manager/Branches';
 import ManagerProfile from './pages/Manager/Profile';
 
-// ============================================================
-// ✅ STYLIST PAGES (FULLY IMPLEMENTED)
-// ============================================================
+// Stylist Pages
 import StylistDashboard from './pages/Stylist/Dashboard';
 import StylistMyAppointments from './pages/Stylist/MyAppointments';
 import StylistSchedule from './pages/Stylist/Schedule';
@@ -245,9 +242,7 @@ function App() {
           <Route path="profile" element={<ManagerProfile />} />
         </Route>
 
-        {/* ============================================================ */}
-        {/* ✅ STYLIST ROUTES (FULLY IMPLEMENTED - NO "COMING SOON") */}
-        {/* ============================================================ */}
+        {/* Stylist Routes */}
         <Route path="/stylist" element={
           <ProtectedRoute allowedRoles={['stylist']}>
             <StylistLayout />

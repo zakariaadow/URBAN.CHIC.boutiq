@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaMoneyBillWave, FaChartLine, FaWallet, FaCreditCard,
   FaSpinner, FaArrowUp, FaArrowDown, FaCalendarDay,
@@ -36,13 +36,13 @@ const FinanceDashboard = () => {
     setLoading(true);
     try {
       // Fetch dashboard data from finance endpoint
-      const response = await axios.get('/api/finance/dashboard');
+      const response = await api.get('/api/finance/dashboard');
       const data = response.data?.data || {};
       
       // Fetch financial summary
       let summaryData = {};
       try {
-        const summaryRes = await axios.get('/api/finance/reports/summary');
+        const summaryRes = await api.get('/api/finance/reports/summary');
         summaryData = summaryRes.data?.data || {};
       } catch (e) {
         console.log('Summary endpoint not available');
@@ -51,7 +51,7 @@ const FinanceDashboard = () => {
       // Fetch recent expenses
       let expensesData = [];
       try {
-        const expensesRes = await axios.get('/api/finance/expenses', {
+        const expensesRes = await api.get('/api/finance/expenses', {
           params: { limit: 5 }
         });
         expensesData = expensesRes.data?.data?.items || expensesRes.data?.data || [];
@@ -62,7 +62,7 @@ const FinanceDashboard = () => {
       // Fetch recent payroll
       let payrollData = [];
       try {
-        const payrollRes = await axios.get('/api/finance/payroll', {
+        const payrollRes = await api.get('/api/finance/payroll', {
           params: { limit: 5 }
         });
         payrollData = payrollRes.data?.data?.items || payrollRes.data?.data || [];
@@ -73,7 +73,7 @@ const FinanceDashboard = () => {
       // Fetch recent commissions
       let commissionsData = [];
       try {
-        const commissionsRes = await axios.get('/api/finance/commissions', {
+        const commissionsRes = await api.get('/api/finance/commissions', {
           params: { limit: 5 }
         });
         commissionsData = commissionsRes.data?.data?.items || commissionsRes.data?.data || [];

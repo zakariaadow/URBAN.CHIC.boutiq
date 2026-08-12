@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, FaSearch, FaFilter, FaEye,
   FaCheck, FaTimes, FaSpinner, FaClock,
@@ -60,7 +60,7 @@ const ReceptionistAppointments = () => {
         status: statusFilter !== 'all' ? statusFilter : undefined
       };
       
-      const response = await axios.get('/api/receptionist/appointments', { params });
+      const response = await api.get('/api/receptionist/appointments', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -109,7 +109,7 @@ const ReceptionistAppointments = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         params: { role: 'customer', limit: 100 }
       });
       const data = response.data?.data || response.data || [];
@@ -121,7 +121,7 @@ const ReceptionistAppointments = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get('/api/admin/services', {
+      const response = await api.get('/api/admin/services', {
         params: { is_active: 1, limit: 100 }
       });
       const data = response.data?.data || response.data || [];
@@ -133,7 +133,7 @@ const ReceptionistAppointments = () => {
 
   const fetchStylists = async () => {
     try {
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         params: { role: 'stylist', limit: 100 }
       });
       const data = response.data?.data || response.data || [];
@@ -145,7 +145,7 @@ const ReceptionistAppointments = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', {
+      const response = await api.get('/api/admin/branches', {
         params: { is_active: 1, limit: 100 }
       });
       const data = response.data?.data || response.data || [];
@@ -158,7 +158,7 @@ const ReceptionistAppointments = () => {
   const handleStatusUpdate = async (id, status) => {
     setUpdatingStatus(true);
     try {
-      await axios.put(`/api/receptionist/appointments/${id}/status`, { status });
+      await api.put(`/api/receptionist/appointments/${id}/status`, { status });
       toast.success(`Appointment ${status} successfully`);
       fetchAppointments();
     } catch (error) {
@@ -172,7 +172,7 @@ const ReceptionistAppointments = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this appointment?')) return;
     try {
-      await axios.delete(`/api/receptionist/appointments/${id}`);
+      await api.delete(`/api/receptionist/appointments/${id}`);
       toast.success('Appointment deleted successfully');
       fetchAppointments();
       if (showDetails) setShowDetails(false);
@@ -212,7 +212,7 @@ const ReceptionistAppointments = () => {
         notes: formData.notes
       };
       
-      await axios.put(`/api/receptionist/appointments/${editingAppointment.id}`, updateData);
+      await api.put(`/api/receptionist/appointments/${editingAppointment.id}`, updateData);
       toast.success('Appointment updated successfully');
       setShowEditModal(false);
       setEditingAppointment(null);

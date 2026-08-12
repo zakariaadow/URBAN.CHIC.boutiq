@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaStar, FaStarHalfAlt, FaRegStar, FaUser,
   FaCalendarDay, FaEdit, FaTrash, FaTimes,
@@ -36,7 +36,7 @@ const Reviews = () => {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/reviews', config);
+      const response = await api.get('/api/customer/reviews', config);
       // Handle both array and object responses
       const reviewsData = response.data?.data || response.data || [];
       setReviews(Array.isArray(reviewsData) ? reviewsData : []);
@@ -51,7 +51,7 @@ const Reviews = () => {
 
   const fetchAvailableAppointments = async () => {
     try {
-      const response = await axios.get('/api/customer/appointments/history', {
+      const response = await api.get('/api/customer/appointments/history', {
         ...config,
         params: { status: 'completed', limit: 100 }
       });
@@ -98,13 +98,13 @@ const Reviews = () => {
     setSubmitting(true);
     try {
       if (editingReview) {
-        await axios.put(`/api/customer/reviews/${editingReview.id}`, {
+        await api.put(`/api/customer/reviews/${editingReview.id}`, {
           rating: formData.rating,
           comment: formData.comment
         }, config);
         toast.success(t('reviews.updateSuccess'));
       } else {
-        await axios.post('/api/customer/reviews', {
+        await api.post('/api/customer/reviews', {
           appointment_id: formData.appointment_id,
           rating: formData.rating,
           comment: formData.comment
@@ -126,7 +126,7 @@ const Reviews = () => {
     if (!window.confirm(t('reviews.deleteConfirmation'))) return;
     
     try {
-      await axios.delete(`/api/customer/reviews/${id}`, config);
+      await api.delete(`/api/customer/reviews/${id}`, config);
       toast.success(t('reviews.deleteSuccess'));
       fetchReviews();
       fetchAvailableAppointments();

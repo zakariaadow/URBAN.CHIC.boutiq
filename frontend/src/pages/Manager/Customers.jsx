@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUsers, 
   FaSearch, 
@@ -42,7 +42,7 @@ const Customers = () => {
         search
       });
 
-      const response = await axios.get(
+      const response = await api.get(
         `/api/manager/customers?${params.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -65,7 +65,7 @@ const Customers = () => {
 
   const viewCustomerDetails = async (customerId) => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/manager/customers/${customerId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );

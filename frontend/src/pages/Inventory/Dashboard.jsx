@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBoxes, FaExclamationTriangle, FaClock, FaDollarSign,
   FaSpinner, FaArrowUp, FaArrowDown, FaClipboardList
@@ -26,9 +26,9 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const [dashboardRes, lowStockRes, expiredRes] = await Promise.all([
-        axios.get('/api/inventory/dashboard', config),
-        axios.get('/api/inventory/stock/alerts/low', config),
-        axios.get('/api/inventory/stock/alerts/expired', config)
+        api.get('/api/inventory/dashboard', config),
+        api.get('/api/inventory/stock/alerts/low', config),
+        api.get('/api/inventory/stock/alerts/expired', config)
       ]);
 
       setStats(dashboardRes.data?.data || {});

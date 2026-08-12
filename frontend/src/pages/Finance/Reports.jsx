@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaChartLine, FaDownload, FaPrint, FaSpinner,
   FaCalendarDay, FaMoneyBillWave, FaWallet,
@@ -55,19 +55,19 @@ const FinanceReports = () => {
         yearlySalesRes,
         financialSummaryRes
       ] = await Promise.all([
-        axios.get('/api/finance/reports/profit-loss', {
+        api.get('/api/finance/reports/profit-loss', {
           params: { start_date: startDateStr, end_date: endDateStr }
         }),
-        axios.get('/api/finance/sales/daily', {
+        api.get('/api/finance/sales/daily', {
           params: { date: endDateStr }
         }),
-        axios.get('/api/finance/sales/monthly', {
+        api.get('/api/finance/sales/monthly', {
           params: { month: today.getMonth() + 1, year: today.getFullYear() }
         }),
-        axios.get('/api/finance/sales/yearly', {
+        api.get('/api/finance/sales/yearly', {
           params: { year: today.getFullYear() }
         }),
-        axios.get('/api/finance/reports/summary')
+        api.get('/api/finance/reports/summary')
       ]);
 
       setProfitLoss(profitLossRes.data?.data || {});

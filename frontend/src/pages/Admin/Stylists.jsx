@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaBuilding,
   FaEdit, FaTrash, FaSearch, FaFilter,
@@ -47,7 +47,7 @@ const Stylists = () => {
     setLoading(true);
     try {
       // Fetch stylists with their details
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         ...config,
         params: {
           role: 'stylist',
@@ -64,7 +64,7 @@ const Stylists = () => {
         (Array.isArray(data) ? data : []).map(async (user) => {
           try {
             // Fetch stylist details from stylists table
-            const stylistRes = await axios.get(`/api/admin/stylists/user/${user.id}`, config);
+            const stylistRes = await api.get(`/api/admin/stylists/user/${user.id}`, config);
             const stylistData = stylistRes.data?.data || stylistRes.data || {};
             return {
               ...user,
@@ -111,12 +111,12 @@ const Stylists = () => {
       let userId;
       if (editingStylist) {
         // Update user
-        await axios.put(`/api/admin/users/${editingStylist.id}`, userData, config);
+        await api.put(`/api/admin/users/${editingStylist.id}`, userData, config);
         userId = editingStylist.id;
         toast.success(t('admin.stylists.updateSuccess'));
       } else {
         // Create user
-        const response = await axios.post('/api/admin/users', userData, config);
+        const response = await api.post('/api/admin/users', userData, config);
         userId = response.data?.data?.id || response.data?.id;
         toast.success(t('admin.stylists.createSuccess'));
       }
@@ -131,9 +131,9 @@ const Stylists = () => {
         };
         
         if (editingStylist?.stylist_id) {
-          await axios.put(`/api/admin/stylists/${editingStylist.stylist_id}`, stylistData, config);
+          await api.put(`/api/admin/stylists/${editingStylist.stylist_id}`, stylistData, config);
         } else {
-          await axios.post('/api/admin/stylists', stylistData, config);
+          await api.post('/api/admin/stylists', stylistData, config);
         }
       }
 
@@ -150,7 +150,7 @@ const Stylists = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     const action = currentStatus === 'active' ? 'deactivate' : 'activate';
     try {
-      await axios.post(`/api/admin/users/${id}/${action}`, {}, config);
+      await api.post(`/api/admin/users/${id}/${action}`, {}, config);
       toast.success(t(`admin.stylists.${action}Success`));
       fetchStylists();
     } catch (error) {
@@ -162,7 +162,7 @@ const Stylists = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.stylists.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/users/${id}`, config);
+      await api.delete(`/api/admin/users/${id}`, config);
       toast.success(t('admin.stylists.deleteSuccess'));
       fetchStylists();
     } catch (error) {

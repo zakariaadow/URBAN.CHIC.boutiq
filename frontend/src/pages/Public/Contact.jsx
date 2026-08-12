@@ -1,7 +1,7 @@
 // src/pages/Public/Contact.jsx
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock,
   FaFacebook, FaTwitter, FaInstagram, FaYoutube,
@@ -31,7 +31,7 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/public/contact', formData);
+      await api.post('/api/public/contact', formData);
       toast.success(t('contact.success'));
       setSubmitted(true);
       setFormData({

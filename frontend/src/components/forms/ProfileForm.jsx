@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaEnvelope, FaPhone, FaCamera, FaSpinner, FaSave } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../../services/api';
 
 const ProfileForm = ({ 
   initialData = {},

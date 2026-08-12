@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaHeart, FaStar, FaCut, FaUser, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -10,7 +10,7 @@ const Favorites = () => {
   const [favoriteStylists, setFavoriteStylists] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const api = axios.create({
+  const api = api.create({
     baseURL: '/api',
     withCredentials: true
   });

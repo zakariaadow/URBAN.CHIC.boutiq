@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaEnvelope, FaSpinner, FaCheckCircle,
   FaArrowLeft, FaKey, FaMailBulk
@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/auth/forgot-password', { email });
+      await api.post('/api/auth/forgot-password', { email });
       toast.success(t('forgotPassword.success'));
       setSubmitted(true);
     } catch (error) {

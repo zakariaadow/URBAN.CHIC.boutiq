@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaDatabase, FaDownload, FaUpload, FaSpinner,
   FaCheckCircle, FaTimes, FaClock, FaTrash,
@@ -35,7 +35,7 @@ const BackupRestore = () => {
   const handleBackup = async () => {
     setBackingUp(true);
     try {
-      await axios.post('/api/admin/settings/backup', {}, config);
+      await api.post('/api/admin/settings/backup', {}, config);
       toast.success(t('admin.backup.backupSuccess'));
       // Refresh backup list
     } catch (error) {
@@ -51,7 +51,7 @@ const BackupRestore = () => {
     
     setRestoring(true);
     try {
-      await axios.post(`/api/admin/settings/restore/${backupId}`, {}, config);
+      await api.post(`/api/admin/settings/restore/${backupId}`, {}, config);
       toast.success(t('admin.backup.restoreSuccess'));
     } catch (error) {
       console.error('Error restoring backup:', error);

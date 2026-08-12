@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaPercent, FaSearch, FaFilter, FaCalendarDay,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -41,7 +41,7 @@ const FinanceTax = () => {
         period: period
       };
       
-      const response = await axios.get('/api/finance/tax', { params });
+      const response = await api.get('/api/finance/tax', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {

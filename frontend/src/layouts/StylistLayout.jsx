@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 import {
   FaHome, FaCalendarCheck, FaUser, FaCog,
   FaSignOutAlt, FaBars, FaTimes, FaClock,
@@ -32,7 +31,7 @@ const StylistLayout = () => {
   const token = localStorage.getItem('token');
 
   // Create axios instance with auth header
-  const authAxios = axios.create({
+  const authAxios = api.create({
     baseURL: `${API_URL}/api`,
     headers: {
       'Content-Type': 'application/json',

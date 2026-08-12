@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaSpinner, FaSave } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -15,7 +15,7 @@ const Profile = () => {
     // Note: You might need an API endpoint to get the current Inventory Officer's profile.
     // Currently using '/api/admin/users/me' or standard user logic. 
     // If not available, you can manually fill the form.
-    axios.get('/api/admin/users/me', config).then(res => {
+    api.get('/api/admin/users/me', config).then(res => {
       setProfile(res.data?.data || {});
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -24,7 +24,7 @@ const Profile = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await axios.put('/api/admin/users/me', profile, config);
+      await api.put('/api/admin/users/me', profile, config);
       toast.success('Profile updated');
     } catch (error) {
       toast.error('Failed to update profile');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUsers, FaSearch, FaPlus, FaEdit, FaTrash,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -57,7 +57,7 @@ const FinancePayroll = () => {
         payment_status: statusFilter !== 'all' ? statusFilter : undefined
       };
       
-      const response = await axios.get('/api/finance/payroll', { params });
+      const response = await api.get('/api/finance/payroll', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -80,7 +80,7 @@ const FinancePayroll = () => {
 
   const fetchStaff = async () => {
     try {
-      const response = await axios.get('/api/finance/payroll/staff');
+      const response = await api.get('/api/finance/payroll/staff');
       const data = response.data?.data || response.data || [];
       setEmployees(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -112,10 +112,10 @@ const FinancePayroll = () => {
       };
 
       if (editingRecord) {
-        await axios.put(`/api/finance/payroll/${editingRecord.id}`, submitData);
+        await api.put(`/api/finance/payroll/${editingRecord.id}`, submitData);
         toast.success('Payroll record updated successfully');
       } else {
-        await axios.post('/api/finance/payroll', submitData);
+        await api.post('/api/finance/payroll', submitData);
         toast.success('Payroll record created successfully');
       }
       
@@ -132,7 +132,7 @@ const FinancePayroll = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this payroll record?')) return;
     try {
-      await axios.delete(`/api/finance/payroll/${id}`);
+      await api.delete(`/api/finance/payroll/${id}`);
       toast.success('Payroll record deleted successfully');
       fetchPayroll();
     } catch (error) {
@@ -143,7 +143,7 @@ const FinancePayroll = () => {
 
   const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.put(`/api/finance/payroll/${id}`, { payment_status: status });
+      await api.put(`/api/finance/payroll/${id}`, { payment_status: status });
       toast.success('Payment status updated');
       fetchPayroll();
     } catch (error) {

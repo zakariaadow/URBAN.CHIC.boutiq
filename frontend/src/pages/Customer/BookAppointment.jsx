@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarAlt, FaClock, FaUser, FaCut, 
   FaStore, FaArrowLeft, FaCheck, FaSpinner,
@@ -58,8 +58,8 @@ const BookAppointment = () => {
     setFetchingData(true);
     try {
       const [branchesRes, servicesRes] = await Promise.all([
-        axios.get('/api/customer/appointments/branches', config),
-        axios.get('/api/customer/appointments/services', config)
+        api.get('/api/customer/appointments/branches', config),
+        api.get('/api/customer/appointments/services', config)
       ]);
       
       const branchesData = branchesRes.data?.data || branchesRes.data || [];
@@ -79,7 +79,7 @@ const BookAppointment = () => {
 
   const fetchStylists = async (branchId) => {
     try {
-      const response = await axios.get('/api/customer/appointments/stylists', {
+      const response = await api.get('/api/customer/appointments/stylists', {
         ...config,
         params: { branch_id: branchId }
       });
@@ -116,7 +116,7 @@ const BookAppointment = () => {
         params.stylist_id = formData.stylist_id;
       }
       
-      const response = await axios.get('/api/customer/appointments/available-slots', {
+      const response = await api.get('/api/customer/appointments/available-slots', {
         ...config,
         params: params
       });
@@ -239,7 +239,7 @@ const BookAppointment = () => {
       
       console.log('Booking appointment with data:', appointmentData);
       
-      const response = await axios.post('/api/customer/appointments/book-multiple', appointmentData, config);
+      const response = await api.post('/api/customer/appointments/book-multiple', appointmentData, config);
       console.log('Booking response:', response.data);
       
       toast.success('Appointment booked successfully! You can now make payment.');

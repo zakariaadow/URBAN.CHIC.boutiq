@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaExclamationTriangle, FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -11,7 +11,7 @@ const LowStock = () => {
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
   useEffect(() => {
-    axios.get('/api/inventory/stock/alerts/low', config)
+    api.get('/api/inventory/stock/alerts/low', config)
       .then(res => {
         setItems(res.data?.data || []);
         setLoading(false);

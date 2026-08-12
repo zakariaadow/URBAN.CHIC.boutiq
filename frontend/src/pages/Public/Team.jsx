@@ -1,7 +1,7 @@
 // src/pages/Public/Team.jsx
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaStar, FaClock, FaAward,
   FaInstagram, FaFacebook, FaTwitter,
@@ -101,7 +101,7 @@ const Team = () => {
   const fetchTeam = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/public/team');
+      const response = await api.get('/api/public/team');
       
       // Fix 1: Handle paginated response
       let members = [];

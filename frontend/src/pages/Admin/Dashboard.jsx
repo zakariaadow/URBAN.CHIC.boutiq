@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUsers, FaCut, FaTags, FaStore, FaCalendarCheck,
   FaMoneyBillWave, FaBoxes, FaUserCog, FaFileAlt,
@@ -127,7 +127,7 @@ const AdminDashboard = () => {
       }
 
       console.log('Fetching from endpoint:', endpoint, 'with params:', params);
-      const response = await axios.get(endpoint, { ...config, params });
+      const response = await api.get(endpoint, { ...config, params });
       
       // Handle different response structures
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/admin/categories', config);
+      const response = await api.get('/api/admin/categories', config);
       const cats = response.data?.data || response.data || [];
       setCategories(Array.isArray(cats) ? cats : []);
     } catch (error) {
@@ -159,7 +159,7 @@ const AdminDashboard = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', config);
+      const response = await api.get('/api/admin/branches', config);
       const branches = response.data?.data || response.data || [];
       setBranches(Array.isArray(branches) ? branches : []);
     } catch (error) {
@@ -169,7 +169,7 @@ const AdminDashboard = () => {
 
   const fetchStylists = async () => {
     try {
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         ...config,
         params: { role: 'stylist' }
       });
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get('/api/admin/services', config);
+      const response = await api.get('/api/admin/services', config);
       const services = response.data?.data || response.data || [];
       setAllServices(Array.isArray(services) ? services : []);
     } catch (error) {
@@ -223,7 +223,7 @@ const AdminDashboard = () => {
             }
             
             console.log('Updating user with data:', updateData);
-            response = await axios.put(endpoint, updateData, config);
+            response = await api.put(endpoint, updateData, config);
           } else {
             endpoint = '/api/admin/users';
             const newUserData = {
@@ -238,7 +238,7 @@ const AdminDashboard = () => {
             };
             
             console.log('Creating user with data:', newUserData);
-            response = await axios.post(endpoint, newUserData, config);
+            response = await api.post(endpoint, newUserData, config);
             
             // If creating a stylist, also create stylist record
             if (activeTab === 'stylists' && response.data?.data?.id) {
@@ -249,7 +249,7 @@ const AdminDashboard = () => {
                   is_available: true,
                   is_active: true
                 };
-                await axios.post('/api/admin/stylists', stylistData, config);
+                await api.post('/api/admin/stylists', stylistData, config);
                 console.log('Stylist record created:', stylistData);
               } catch (stylistError) {
                 console.error('Error creating stylist record:', stylistError);
@@ -276,7 +276,7 @@ const AdminDashboard = () => {
             is_active: formData.is_active !== undefined ? formData.is_active : true
           };
           console.log('Service data:', serviceData);
-          response = editingItem ? await axios.put(endpoint, serviceData, config) : await axios.post(endpoint, serviceData, config);
+          response = editingItem ? await api.put(endpoint, serviceData, config) : await api.post(endpoint, serviceData, config);
           break;
         }
         
@@ -291,7 +291,7 @@ const AdminDashboard = () => {
             description: formData.description || '',
             is_active: true
           };
-          response = editingItem ? await axios.put(endpoint, categoryData, config) : await axios.post(endpoint, categoryData, config);
+          response = editingItem ? await api.put(endpoint, categoryData, config) : await api.post(endpoint, categoryData, config);
           break;
         }
         
@@ -311,7 +311,7 @@ const AdminDashboard = () => {
             manager_name: formData.manager_name || '',
             is_active: true
           };
-          response = editingItem ? await axios.put(endpoint, branchData, config) : await axios.post(endpoint, branchData, config);
+          response = editingItem ? await api.put(endpoint, branchData, config) : await api.post(endpoint, branchData, config);
           break;
         }
         
@@ -329,7 +329,7 @@ const AdminDashboard = () => {
             stylist_id: formData.stylist_id ? parseInt(formData.stylist_id) : null,
             status: formData.status || 'pending'
           };
-          response = editingItem ? await axios.put(endpoint, appointmentData, config) : await axios.post(endpoint, appointmentData, config);
+          response = editingItem ? await api.put(endpoint, appointmentData, config) : await api.post(endpoint, appointmentData, config);
           break;
         }
         
@@ -376,7 +376,7 @@ const AdminDashboard = () => {
         default:
           return;
       }
-      await axios.delete(endpoint, config);
+      await api.delete(endpoint, config);
       toast.success(`${activeTab.slice(0, -1)} deleted successfully`);
       fetchData();
     } catch (error) {
@@ -413,7 +413,7 @@ const AdminDashboard = () => {
       }
       
       console.log('Toggling status with endpoint:', endpoint);
-      await axios.post(endpoint, {}, config);
+      await api.post(endpoint, {}, config);
       toast.success('Status updated successfully');
       fetchData();
     } catch (error) {

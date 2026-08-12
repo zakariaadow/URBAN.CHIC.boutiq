@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCamera, 
   FaSpinner, 
@@ -36,7 +36,7 @@ const BeforeAfterPhotos = ({ appointment, onClose, onUpdate }) => {
   const fetchPhotos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/stylist/appointments/${appointment.id}/photos`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -66,7 +66,7 @@ const BeforeAfterPhotos = ({ appointment, onClose, onUpdate }) => {
     formData.append('type', type);
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/stylist/appointments/${appointment.id}/photos`,
         formData,
         {
@@ -95,7 +95,7 @@ const BeforeAfterPhotos = ({ appointment, onClose, onUpdate }) => {
 
     setLoading(true);
     try {
-      const response = await axios.delete(
+      const response = await api.delete(
         `/api/stylist/appointments/${appointment.id}/photos/${photoId}`,
         { 
           headers: { Authorization: `Bearer ${token}` },
@@ -119,7 +119,7 @@ const BeforeAfterPhotos = ({ appointment, onClose, onUpdate }) => {
   const setPrimaryPhoto = async (photoId, type) => {
     setLoading(true);
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `/api/stylist/appointments/${appointment.id}/photos/${photoId}/primary`,
         { type },
         { headers: { Authorization: `Bearer ${token}` } }

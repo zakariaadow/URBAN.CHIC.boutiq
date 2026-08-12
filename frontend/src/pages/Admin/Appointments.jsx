@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, FaUser, FaCut, FaBuilding,
   FaSearch, FaFilter, FaEye, FaTimes,
@@ -47,7 +47,7 @@ const AdminAppointments = () => {
       };
       
       console.log('Fetching appointments with params:', params);
-      const response = await axios.get('/api/admin/appointments', { ...config, params });
+      const response = await api.get('/api/admin/appointments', { ...config, params });
       
       // Handle different response structures
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
@@ -69,7 +69,7 @@ const AdminAppointments = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/admin/branches', config);
+      const response = await api.get('/api/admin/branches', config);
       const branchesData = response.data?.data || response.data || [];
       setBranches(Array.isArray(branchesData) ? branchesData : []);
     } catch (error) {
@@ -82,10 +82,10 @@ const AdminAppointments = () => {
     try {
       // Try both possible endpoints
       try {
-        await axios.put(`/api/admin/appointments/${id}/status`, { status }, config);
+        await api.put(`/api/admin/appointments/${id}/status`, { status }, config);
       } catch (error) {
         // If the above fails, try alternative endpoint
-        await axios.patch(`/api/admin/appointments/${id}`, { status }, config);
+        await api.patch(`/api/admin/appointments/${id}`, { status }, config);
       }
       toast.success(t('admin.appointments.statusUpdateSuccess'));
       fetchAppointments();
@@ -100,7 +100,7 @@ const AdminAppointments = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.appointments.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/appointments/${id}`, config);
+      await api.delete(`/api/admin/appointments/${id}`, config);
       toast.success(t('admin.appointments.deleteSuccess'));
       fetchAppointments();
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaTruck, FaPlus, FaEdit, FaTrash, FaSearch, FaSpinner, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -30,7 +30,7 @@ const Suppliers = () => {
   const fetchSuppliers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/inventory/suppliers', { 
+      const response = await api.get('/api/inventory/suppliers', { 
         ...config, 
         params: { search: searchTerm || undefined }
       });
@@ -73,10 +73,10 @@ const Suppliers = () => {
     setSubmitting(true);
     try {
       if (editing) {
-        await axios.put(`/api/inventory/suppliers/${editing.id}`, formData, config);
+        await api.put(`/api/inventory/suppliers/${editing.id}`, formData, config);
         toast.success('Supplier updated successfully');
       } else {
-        await axios.post('/api/inventory/suppliers', formData, config);
+        await api.post('/api/inventory/suppliers', formData, config);
         toast.success('Supplier added successfully');
       }
       setShowForm(false); 
@@ -92,7 +92,7 @@ const Suppliers = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this supplier?')) return;
     try { 
-      await axios.delete(`/api/inventory/suppliers/${id}`, config); 
+      await api.delete(`/api/inventory/suppliers/${id}`, config); 
       toast.success('Supplier deleted successfully');
       fetchSuppliers(); 
     } catch (error) { 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaSpinner, FaCalendarAlt, FaClock, FaUser, FaCut, FaStore } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../../services/api';
 
 const AppointmentForm = ({ 
   initialData = {},

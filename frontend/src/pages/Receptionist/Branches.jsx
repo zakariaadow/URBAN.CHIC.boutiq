@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaStore, FaSearch, FaMapMarkerAlt, FaPhone, 
   FaEnvelope, FaClock, FaSpinner
@@ -8,7 +8,7 @@ import {
 import { toast } from 'react-toastify';
 
 // Create axios instance with session-based authentication
-const api = axios.create({
+const customApi = api.create({
   baseURL: '/api',
   withCredentials: true,
   headers: {
@@ -30,7 +30,7 @@ const ReceptionistBranches = () => {
   const fetchBranches = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/receptionist/branches');
+      const response = await customApi.get('/receptionist/branches');
       
       // Handle different response structures
       let branchData = [];

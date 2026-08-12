@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaMoneyBillWave, FaSearch, FaPlus, FaEdit, FaTrash,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -55,7 +55,7 @@ const FinanceIncome = () => {
         is_verified: statusFilter !== 'all' ? (statusFilter === 'verified' ? 1 : 0) : undefined
       };
       
-      const response = await axios.get('/api/finance/income', { params });
+      const response = await api.get('/api/finance/income', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -78,7 +78,7 @@ const FinanceIncome = () => {
 
   const fetchBranches = async () => {
     try {
-      const response = await axios.get('/api/finance/branches');
+      const response = await api.get('/api/finance/branches');
       const data = response.data?.data || response.data || [];
       setBranches(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -103,10 +103,10 @@ const FinanceIncome = () => {
       };
 
       if (editingIncome) {
-        await axios.put(`/api/finance/income/${editingIncome.id}`, submitData);
+        await api.put(`/api/finance/income/${editingIncome.id}`, submitData);
         toast.success('Income record updated successfully');
       } else {
-        await axios.post('/api/finance/income', submitData);
+        await api.post('/api/finance/income', submitData);
         toast.success('Income record created successfully');
       }
       
@@ -123,7 +123,7 @@ const FinanceIncome = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this income record?')) return;
     try {
-      await axios.delete(`/api/finance/income/${id}`);
+      await api.delete(`/api/finance/income/${id}`);
       toast.success('Income record deleted successfully');
       fetchIncome();
     } catch (error) {
@@ -134,7 +134,7 @@ const FinanceIncome = () => {
 
   const handleVerify = async (id, currentStatus) => {
     try {
-      await axios.put(`/api/finance/income/${id}`, { is_verified: !currentStatus });
+      await api.put(`/api/finance/income/${id}`, { is_verified: !currentStatus });
       toast.success('Income verification status updated');
       fetchIncome();
     } catch (error) {

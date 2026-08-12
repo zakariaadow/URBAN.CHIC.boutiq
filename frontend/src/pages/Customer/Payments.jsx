@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCreditCard, FaMoneyBillWave, FaMobileAlt,
   FaUniversity, FaSearch, FaChevronLeft, FaChevronRight,
@@ -41,7 +41,7 @@ const Payments = () => {
   const fetchPayments = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/payments', {
+      const response = await api.get('/api/customer/payments', {
         ...config,
         params: { 
           page: currentPage, 
@@ -73,7 +73,7 @@ const Payments = () => {
 
   const fetchPaymentMethods = async () => {
     try {
-      const response = await axios.get('/api/customer/payments/methods', config);
+      const response = await api.get('/api/customer/payments/methods', config);
       
       // Handle different response formats
       let methods = [];
@@ -124,7 +124,7 @@ const Payments = () => {
 
     setProcessingPayment(paymentData.payment_id);
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/customer/payments/${paymentData.payment_id}/pay`,
         {
           payment_method: paymentData.payment_method,
@@ -207,7 +207,7 @@ const Payments = () => {
 
   const downloadReceipt = async (paymentId) => {
     try {
-      const response = await axios.get(`/api/customer/payments/${paymentId}/receipt`, {
+      const response = await api.get(`/api/customer/payments/${paymentId}/receipt`, {
         ...config,
         responseType: 'blob'
       });

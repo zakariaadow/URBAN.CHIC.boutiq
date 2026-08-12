@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaSave } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -11,13 +11,13 @@ const Profile = () => {
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
   useEffect(() => {
-    axios.get('/api/manager/branch', config)
+    api.get('/api/manager/branch', config)
       .then(res => setBranch(res.data?.data || {}))
       .finally(() => setLoading(false));
   }, []);
 
   const updateBranch = async () => {
-    try { await axios.put('/api/manager/branch', branch, config); toast.success('Branch updated'); } 
+    try { await api.put('/api/manager/branch', branch, config); toast.success('Branch updated'); } 
     catch { toast.error('Failed to update'); }
   };
 

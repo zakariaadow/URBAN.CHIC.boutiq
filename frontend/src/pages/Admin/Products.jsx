@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBox, FaEdit, FaTrash, FaSearch,
   FaPlus, FaEye, FaToggleOn, FaToggleOff,
@@ -53,7 +53,7 @@ const Products = () => {
         status: statusFilter !== 'all' ? statusFilter : undefined,
         category_id: categoryFilter !== 'all' ? categoryFilter : undefined
       };
-      const response = await axios.get('/api/admin/products', { ...config, params });
+      const response = await api.get('/api/admin/products', { ...config, params });
       const data = response.data?.data || response.data || [];
       setProducts(Array.isArray(data) ? data : []);
       setTotalPages(response.data?.totalPages || 1);
@@ -68,7 +68,7 @@ const Products = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/admin/categories', config);
+      const response = await api.get('/api/admin/categories', config);
       const data = response.data?.data || response.data || [];
       setCategories(Array.isArray(data) ? data : []);
     } catch (error) {

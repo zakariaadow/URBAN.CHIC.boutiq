@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUserCheck, FaSearch, FaSpinner, FaCheck,
   FaUser, FaCalendarDay, FaClock, FaCut
@@ -24,7 +24,7 @@ const ReceptionistCheckIn = () => {
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/receptionist/appointments/today', config);
+      const response = await api.get('/api/receptionist/appointments/today', config);
       const data = response.data?.data || response.data || [];
       setAppointments(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -39,7 +39,7 @@ const ReceptionistCheckIn = () => {
   const handleCheckIn = async (id) => {
     setCheckingIn(true);
     try {
-      await axios.post(`/api/receptionist/appointments/${id}/check-in`, {}, config);
+      await api.post(`/api/receptionist/appointments/${id}/check-in`, {}, config);
       toast.success('Customer checked in successfully');
       fetchAppointments();
     } catch (error) {

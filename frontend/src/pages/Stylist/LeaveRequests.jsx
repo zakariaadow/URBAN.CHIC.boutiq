@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaFileAlt, 
   FaCalendarAlt,
@@ -31,7 +31,7 @@ const LeaveRequests = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/stylist/leave-requests', {
+      const response = await api.get('/api/stylist/leave-requests', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -48,7 +48,7 @@ const LeaveRequests = () => {
 
   const submitRequest = async () => {
     try {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/stylist/leave-request',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCalendarCheck, 
   FaClock, 
@@ -44,7 +44,7 @@ const StylistDashboard = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/stylist/dashboard`, {
+      const response = await api.get(`${API_URL}/stylist/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

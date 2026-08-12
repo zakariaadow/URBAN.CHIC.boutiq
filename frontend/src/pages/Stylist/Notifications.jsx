@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, 
   FaCheckCircle,
@@ -24,7 +24,7 @@ const StylistNotifications = () => {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/stylist/notifications', {
+      const response = await api.get('/api/stylist/notifications', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -42,7 +42,7 @@ const StylistNotifications = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.post(
+      await api.post(
         `/api/stylist/notifications/${id}/read`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
@@ -55,7 +55,7 @@ const StylistNotifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await axios.post(
+      await api.post(
         '/api/stylist/notifications/read-all',
         {},
         { headers: { Authorization: `Bearer ${token}` } }

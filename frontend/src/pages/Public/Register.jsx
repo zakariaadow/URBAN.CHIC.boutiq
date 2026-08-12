@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaLock, FaPhone,
   FaSpinner, FaEye, FaEyeSlash, FaCheck,
@@ -64,6 +64,9 @@ const Register = () => {
 
     setLoading(true);
     try {
+      // ✅ FIX: Get the API URL from environment variable
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      
       const safeUsername = formData.first_name 
         ? `${formData.first_name.toLowerCase()}${Math.floor(Math.random() * 1000)}`
         : `user${Math.floor(Math.random() * 10000)}`;
@@ -78,7 +81,8 @@ const Register = () => {
         account_type: formData.role || 'customer'
       };
 
-      const response = await axios.post('/api/auth/register', registerData);
+      // ✅ FIX: Use the API_URL in the request
+      const response = await api.post(`${API_URL}/api/auth/register`, registerData);
       
       if (response.data.status === 'success') {
         toast.success(response.data.message || 'Registration successful! Please login.');

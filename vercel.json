@@ -1,19 +1,17 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "frontend/**",
+      "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "frontend/dist"
+        "distDir": "frontend/dist",
+        "buildCommand": "cd frontend && npm install && npm run build"
       }
     },
     {
       "src": "backend/vercel_app.py",
-      "use": "@vercel/python",
-      "config": {
-        "runtime": "python3.12",
-        "installCommand": "pip install -r backend/requirements.txt"
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [

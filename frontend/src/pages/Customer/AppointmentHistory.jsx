@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaHistory, FaCalendarCheck, FaSearch, FaFilter,
   FaChevronLeft, FaChevronRight, FaStar, FaClock,
@@ -42,7 +42,7 @@ const AppointmentHistory = () => {
         end_date: dateRange.end || undefined
       };
       
-      const response = await axios.get('/api/customer/appointments/history', {
+      const response = await api.get('/api/customer/appointments/history', {
         ...config,
         params
       });
@@ -96,7 +96,7 @@ const AppointmentHistory = () => {
 
   const exportData = async (format) => {
     try {
-      const response = await axios.get('/api/appointments/export', {
+      const response = await api.get('/api/appointments/export', {
         ...config,
         params: { 
           format,

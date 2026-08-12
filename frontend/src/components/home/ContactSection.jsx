@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock,
   FaSpinner, FaCheckCircle, FaArrowRight
@@ -30,7 +30,7 @@ const ContactSection = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/public/contact', formData);
+      await api.post('/api/public/contact', formData);
       toast.success('Message sent successfully!');
       setSubmitted(true);
       setFormData({ name: '', email: '', phone: '', message: '' });

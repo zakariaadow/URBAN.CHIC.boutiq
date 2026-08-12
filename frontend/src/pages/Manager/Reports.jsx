@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 
 const Reports = () => {
   const [range, setRange] = useState({ start: '', end: '' });
@@ -15,7 +15,7 @@ const Reports = () => {
       stylist: '/api/manager/sales/by-stylist'
     };
     try {
-      const res = await axios.get(endpoints[type], { ...config, params: range });
+      const res = await api.get(endpoints[type], { ...config, params: range });
       console.log(res.data);
     } catch { alert('Failed to fetch report'); }
   };

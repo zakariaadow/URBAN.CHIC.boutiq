@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBell, 
   FaCheckCircle,
@@ -36,7 +36,7 @@ const Notifications = () => {
         ...(filter !== 'all' && { is_read: filter === 'unread' ? 'false' : 'true' })
       });
 
-      const response = await axios.get(
+      const response = await api.get(
         `/api/manager/notifications?${params.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -58,7 +58,7 @@ const Notifications = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.post(
+      await api.post(
         `/api/manager/notifications/${id}/read`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
@@ -73,7 +73,7 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await axios.post(
+      await api.post(
         '/api/manager/notifications/read-all',
         {},
         { headers: { Authorization: `Bearer ${token}` } }

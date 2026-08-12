@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaBox, FaSearch, FaPlus, FaEdit, FaTrash, FaEye,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -40,7 +40,7 @@ const Products = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/inventory/products', {
+      const response = await api.get('/api/inventory/products', {
         ...config,
         params: { page: currentPage, limit: 10, search: searchTerm || undefined }
       });
@@ -94,10 +94,10 @@ const Products = () => {
     setSubmitting(true);
     try {
       if (editingProduct) {
-        await axios.put(`/api/inventory/products/${editingProduct.id}`, formData, config);
+        await api.put(`/api/inventory/products/${editingProduct.id}`, formData, config);
         toast.success('Product updated successfully');
       } else {
-        await axios.post('/api/inventory/products', formData, config);
+        await api.post('/api/inventory/products', formData, config);
         toast.success('Product added successfully');
       }
       resetForm();
@@ -112,7 +112,7 @@ const Products = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     try {
-      await axios.delete(`/api/inventory/products/${id}`, config);
+      await api.delete(`/api/inventory/products/${id}`, config);
       toast.success('Product deleted successfully');
       fetchProducts();
     } catch (error) {
@@ -123,7 +123,7 @@ const Products = () => {
   const handleToggle = async (id) => {
     try {
       const product = products.find(p => p.id === id);
-      await axios.put(`/api/inventory/products/${id}`, { is_active: !product.is_active }, config);
+      await api.put(`/api/inventory/products/${id}`, { is_active: !product.is_active }, config);
       toast.success('Status updated');
       fetchProducts();
     } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaFileInvoice, FaDownload, FaPrint, FaSearch,
   FaChevronLeft, FaChevronRight, FaEye, FaTimes,
@@ -37,7 +37,7 @@ const Receipts = () => {
   const fetchReceipts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/receipts', {
+      const response = await api.get('/api/customer/receipts', {
         ...getAuthConfig(),
         params: { page: currentPage, limit: 10 }
       });
@@ -75,7 +75,7 @@ const Receipts = () => {
         return;
       }
 
-      const response = await axios.get(`/api/customer/receipts/${id}/download`, {
+      const response = await api.get(`/api/customer/receipts/${id}/download`, {
         ...getAuthConfig(),
         responseType: 'blob'
       });

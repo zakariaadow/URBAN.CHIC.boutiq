@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaChartLine, 
   FaStar, 
@@ -34,7 +34,7 @@ const Performance = () => {
   const fetchPerformance = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/manager/staff/performance', {
+      const response = await api.get('/api/manager/staff/performance', {
         headers: { Authorization: `Bearer ${token}` },
         params: { range: timeRange }
       });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaMoneyBillWave, FaSearch, FaCreditCard,
   FaCalendarDay, FaUser, FaSpinner, FaCheck,
@@ -44,7 +44,7 @@ const ReceptionistPayments = () => {
         method: methodFilter !== 'all' ? methodFilter : undefined
       };
       
-      const response = await axios.get('/api/receptionist/payments', { params });
+      const response = await api.get('/api/receptionist/payments', { params });
       
       // Handle different response structures
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
@@ -103,7 +103,7 @@ const ReceptionistPayments = () => {
 
   const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.put(`/api/receptionist/payments/${id}/status`, { status });
+      await api.put(`/api/receptionist/payments/${id}/status`, { status });
       toast.success(`Payment ${status} successfully`);
       fetchPayments();
     } catch (error) {

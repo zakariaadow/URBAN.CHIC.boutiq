@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaStickyNote, 
   FaSpinner, 
@@ -36,7 +36,7 @@ const CustomerNotes = ({ appointment, onClose, onUpdate }) => {
 
   const fetchCustomerNotes = async () => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/stylist/appointments/${appointment.id}/notes`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -51,7 +51,7 @@ const CustomerNotes = ({ appointment, onClose, onUpdate }) => {
 
   const fetchNoteHistory = async () => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/stylist/appointments/${appointment.id}/notes/history`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -67,7 +67,7 @@ const CustomerNotes = ({ appointment, onClose, onUpdate }) => {
   const updateAppointmentNotes = async () => {
     setLoading(true);
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `/api/stylist/appointments/${appointment.id}/notes`,
         { notes },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -93,7 +93,7 @@ const CustomerNotes = ({ appointment, onClose, onUpdate }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/stylist/appointments/${appointment.id}/notes`,
         { note: newNote, customer_id: appointment.customer_id },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -121,7 +121,7 @@ const CustomerNotes = ({ appointment, onClose, onUpdate }) => {
 
     setLoading(true);
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `/api/stylist/appointments/${appointment.id}/notes/${noteId}`,
         { note: editingNote.text },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -146,7 +146,7 @@ const CustomerNotes = ({ appointment, onClose, onUpdate }) => {
 
     setLoading(true);
     try {
-      const response = await axios.delete(
+      const response = await api.delete(
         `/api/stylist/appointments/${appointment.id}/notes/${noteId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );

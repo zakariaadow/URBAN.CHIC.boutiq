@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCheckCircle, 
   FaSpinner, 
@@ -58,7 +58,7 @@ const ServiceProgress = ({ appointment, onClose, onUpdate }) => {
   const updateProgress = async (newProgress) => {
     setLoading(true);
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `/api/stylist/appointments/${appointment.id}/progress`,
         { 
           progress: newProgress,

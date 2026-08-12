@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaSearch,
   FaEye, FaUserCheck, FaUserTimes,
@@ -165,7 +165,7 @@ const Customers = () => {
     setLoading(true);
     try {
       // ✅ FIX: Only fetch users with the 'customer' role
-      const response = await axios.get('/api/admin/users', {
+      const response = await api.get('/api/admin/users', {
         ...config,
         params: {
           role: 'customer',
@@ -212,11 +212,11 @@ const Customers = () => {
       let response;
       if (editingUser) {
         // UPDATE EXISTING
-        response = await axios.put(`/api/admin/users/${editingUser.id}`, formData, config);
+        response = await api.put(`/api/admin/users/${editingUser.id}`, formData, config);
         toast.success(t('admin.customers.updateSuccess') || 'Customer updated successfully');
       } else {
         // CREATE NEW (Force role to be customer)
-        response = await axios.post('/api/admin/users', { ...formData, role: 'customer' }, config);
+        response = await api.post('/api/admin/users', { ...formData, role: 'customer' }, config);
         toast.success(t('admin.customers.addSuccess') || 'Customer added successfully');
       }
       closeForm();
@@ -232,7 +232,7 @@ const Customers = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     const action = currentStatus === 'active' ? 'deactivate' : 'activate';
     try {
-      await axios.post(`/api/admin/users/${id}/${action}`, {}, config);
+      await api.post(`/api/admin/users/${id}/${action}`, {}, config);
       toast.success(t(`admin.customers.${action}Success`) || `Customer ${action}d successfully`);
       fetchCustomers();
     } catch (error) {
@@ -247,7 +247,7 @@ const Customers = () => {
       return;
     }
     try {
-      await axios.delete(`/api/admin/users/${id}`, config);
+      await api.delete(`/api/admin/users/${id}`, config);
       toast.success(t('admin.customers.deleteSuccess') || 'Customer deleted successfully');
       fetchCustomers();
     } catch (error) {

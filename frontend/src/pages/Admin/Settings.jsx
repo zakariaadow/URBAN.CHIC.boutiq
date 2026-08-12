@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCog, FaSave, FaSpinner, FaTimes,
   FaBuilding, FaClock, FaMoneyBillWave,
@@ -61,7 +61,7 @@ const Settings = () => {
     setLoading(true);
     try {
       // In production, fetch from API
-      // const response = await axios.get('/api/admin/settings', config);
+      // const response = await api.get('/api/admin/settings', config);
       // setSettings(response.data);
       await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (error) {
@@ -75,7 +75,7 @@ const Settings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await axios.put('/api/admin/settings', settings, config);
+      await api.put('/api/admin/settings', settings, config);
       toast.success(t('admin.settings.saveSuccess'));
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -115,7 +115,7 @@ const Settings = () => {
 
   const clearCache = async () => {
     try {
-      await axios.post('/api/admin/settings/cache/clear', {}, config);
+      await api.post('/api/admin/settings/cache/clear', {}, config);
       toast.success(t('admin.settings.cacheCleared'));
     } catch (error) {
       console.error('Error clearing cache:', error);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaFileAlt, FaSearch, FaDownload, FaEye,
   FaCalendarAlt, FaSpinner, FaFilePdf,
@@ -11,7 +11,7 @@ import {
 import { toast } from 'react-toastify';
 
 // Create axios instance with session-based authentication
-const api = axios.create({
+const customApi = customApi.create({
   baseURL: '/api',
   withCredentials: true,
   headers: {
@@ -40,7 +40,7 @@ const ReceptionistReports = () => {
         ? `/receptionist/reports?report_type=${filterType}`
         : '/receptionist/reports';
       
-      const response = await api.get(url);
+      const response = await customApi.get(url);
       
       let reportData = [];
       if (response.data?.data?.items) {
@@ -64,7 +64,7 @@ const ReceptionistReports = () => {
 
   const handleExport = async (reportId) => {
     try {
-      const response = await api.post('/receptionist/reports/export', {
+      const response = await customApi.post('/receptionist/reports/export', {
         report_id: reportId
       });
       

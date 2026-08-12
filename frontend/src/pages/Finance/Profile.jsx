@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaBuilding,
   FaEdit, FaSave, FaTimes, FaSpinner,
@@ -61,7 +61,7 @@ const FinanceProfile = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/finance/profile');
+      const response = await api.get('/api/finance/profile');
       const data = response.data?.data || response.data || {};
       setProfile(data);
       setFormData(data);
@@ -75,7 +75,7 @@ const FinanceProfile = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/finance/reports/summary');
+      const response = await api.get('/api/finance/reports/summary');
       const data = response.data?.data || {};
       
       setStats({
@@ -94,7 +94,7 @@ const FinanceProfile = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get('/api/finance/notifications', {
+      const response = await api.get('/api/finance/notifications', {
         params: { limit: 5, unread_only: true }
       });
       const data = response.data?.data || response.data || [];
@@ -113,7 +113,7 @@ const FinanceProfile = () => {
         last_name: formData.last_name,
         phone: formData.phone
       };
-      await axios.put('/api/finance/profile', updateData);
+      await api.put('/api/finance/profile', updateData);
       toast.success('Profile updated successfully');
       setProfile({ ...profile, ...formData });
       setEditing(false);
@@ -144,7 +144,7 @@ const FinanceProfile = () => {
     
     setSaving(true);
     try {
-      await axios.put('/api/finance/change-password', {
+      await api.put('/api/finance/change-password', {
         current_password: passwordData.current_password,
         new_password: passwordData.new_password
       });
@@ -188,7 +188,7 @@ const FinanceProfile = () => {
 
   const markNotificationAsRead = async (id) => {
     try {
-      await axios.put(`/api/finance/notifications/${id}/read`);
+      await api.put(`/api/finance/notifications/${id}/read`);
       setNotifications(notifications.filter(n => n.id !== id));
     } catch (error) {
       console.error('Error marking notification as read:', error);

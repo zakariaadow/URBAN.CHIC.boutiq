@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUsers, 
   FaSearch, 
@@ -33,7 +33,7 @@ const Staff = () => {
   const fetchStaff = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/manager/staff', {
+      const response = await api.get('/api/manager/staff', {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaSearch, FaStar, FaStarHalfAlt,
   FaCheckCircle, FaTimesCircle, FaSpinner,
@@ -9,7 +9,7 @@ import {
 import { toast } from 'react-toastify';
 
 // Create axios instance with session-based authentication
-const api = axios.create({
+const customApi = api.create({
   baseURL: '/api',
   withCredentials: true,
   headers: {
@@ -31,7 +31,7 @@ const ReceptionistStylists = () => {
   const fetchStylists = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/receptionist/stylists');
+      const response = await customApi.get('/receptionist/stylists');
       
       // Handle different response structures
       let stylistData = [];

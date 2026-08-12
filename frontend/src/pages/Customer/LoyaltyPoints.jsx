@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaGift, FaStar, FaHistory, FaRocket, 
   FaCheckCircle, FaSpinner, FaCalendarDay,
@@ -31,8 +31,8 @@ const LoyaltyPoints = () => {
     setLoading(true);
     try {
       const [pointsRes, historyRes] = await Promise.all([
-        axios.get('/api/customer/loyalty/points', config),
-        axios.get('/api/customer/loyalty/history', config)
+        api.get('/api/customer/loyalty/points', config),
+        api.get('/api/customer/loyalty/history', config)
       ]);
       
       setPoints(pointsRes.data.points || 0);
@@ -63,7 +63,7 @@ const LoyaltyPoints = () => {
     
     setRedeeming(true);
     try {
-      await axios.post('/api/customer/loyalty/redeem', {
+      await api.post('/api/customer/loyalty/redeem', {
         option_id: selectedOption.id
       }, config);
       

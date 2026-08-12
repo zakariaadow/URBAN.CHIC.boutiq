@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt,
   FaCamera, FaSave, FaTimes, FaSpinner,
@@ -39,7 +39,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/customer/profile', config);
+      const response = await api.get('/api/customer/profile', config);
       setProfile(response.data);
       setFormData({
         name: response.data.name || '',
@@ -85,13 +85,13 @@ const Profile = () => {
     
     try {
       // Update profile
-      await axios.put('/api/customer/profile', formData, config);
+      await api.put('/api/customer/profile', formData, config);
       
       // Upload photo if changed
       if (photo) {
         const formDataPhoto = new FormData();
         formDataPhoto.append('photo', photo);
-        await axios.post('/api/customer/profile/photo', formDataPhoto, {
+        await api.post('/api/customer/profile/photo', formDataPhoto, {
           ...config,
           headers: { ...config.headers, 'Content-Type': 'multipart/form-data' }
         });
@@ -109,7 +109,7 @@ const Profile = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      await axios.delete('/api/customer/profile/delete', config);
+      await api.delete('/api/customer/profile/delete', config);
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       toast.success(t('profile.accountDeleted'));

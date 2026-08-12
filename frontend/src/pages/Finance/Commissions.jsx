@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCut, FaSearch, FaEdit, FaTrash,
   FaSpinner, FaTimes, FaChevronLeft, FaChevronRight,
@@ -51,7 +51,7 @@ const FinanceCommissions = () => {
         is_paid: statusFilter !== 'all' ? (statusFilter === 'paid' ? 1 : 0) : undefined
       };
       
-      const response = await axios.get('/api/finance/commissions', { params });
+      const response = await api.get('/api/finance/commissions', { params });
       
       let responseData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(responseData)) {
@@ -74,7 +74,7 @@ const FinanceCommissions = () => {
 
   const fetchStylists = async () => {
     try {
-      const response = await axios.get('/api/finance/payroll/staff');
+      const response = await api.get('/api/finance/payroll/staff');
       const data = response.data?.data || response.data || [];
       setStylists(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -99,10 +99,10 @@ const FinanceCommissions = () => {
       };
 
       if (editingCommission) {
-        await axios.put(`/api/finance/commissions/${editingCommission.id}`, submitData);
+        await api.put(`/api/finance/commissions/${editingCommission.id}`, submitData);
         toast.success('Commission updated successfully');
       } else {
-        await axios.post('/api/finance/commissions', submitData);
+        await api.post('/api/finance/commissions', submitData);
         toast.success('Commission created successfully');
       }
       
@@ -119,7 +119,7 @@ const FinanceCommissions = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this commission?')) return;
     try {
-      await axios.delete(`/api/finance/commissions/${id}`);
+      await api.delete(`/api/finance/commissions/${id}`);
       toast.success('Commission deleted successfully');
       fetchCommissions();
     } catch (error) {
@@ -130,7 +130,7 @@ const FinanceCommissions = () => {
 
   const handleStatusUpdate = async (id, currentStatus) => {
     try {
-      await axios.put(`/api/finance/commissions/${id}`, { is_paid: !currentStatus });
+      await api.put(`/api/finance/commissions/${id}`, { is_paid: !currentStatus });
       toast.success('Commission status updated');
       fetchCommissions();
     } catch (error) {

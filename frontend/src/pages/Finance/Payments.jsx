@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaCreditCard, FaSearch, FaEye, FaSpinner, FaTimes, 
   FaChevronLeft, FaChevronRight, FaCalendarDay, FaUser, 
@@ -50,7 +50,7 @@ const FinancePayments = () => {
         payment_method: methodFilter !== 'all' ? methodFilter : undefined
       };
       
-      const response = await axios.get('/api/finance/payments', { ...config, params });
+      const response = await api.get('/api/finance/payments', { ...config, params });
       
       let paymentsData = response.data?.data?.items || response.data?.data || response.data || [];
       if (!Array.isArray(paymentsData)) {
@@ -82,7 +82,7 @@ const FinancePayments = () => {
 
   const handleVerifyPayment = async (id) => {
     try {
-      await axios.post(`/api/finance/payments/${id}/verify`, {}, config);
+      await api.post(`/api/finance/payments/${id}/verify`, {}, config);
       toast.success('Payment verified successfully');
       fetchPayments();
     } catch (error) {
@@ -93,7 +93,7 @@ const FinancePayments = () => {
 
   const handleGenerateReceipt = async (paymentId) => {
     try {
-      const response = await axios.get(`/api/finance/payments/${paymentId}/receipt`, config);
+      const response = await api.get(`/api/finance/payments/${paymentId}/receipt`, config);
       const receipt = response.data?.data || response.data;
       if (receipt && receipt.id) {
         setReceiptData(receipt);
@@ -116,7 +116,7 @@ const FinancePayments = () => {
     }
     setSendingReceipt(true);
     try {
-      const response = await axios.post(`/api/receipts/${receiptId}/email`, {}, config);
+      const response = await api.post(`/api/receipts/${receiptId}/email`, {}, config);
       toast.success(response.data?.message || 'Receipt sent to customer via email!');
     } catch (error) {
       console.error('Error sending receipt email:', error);
@@ -134,7 +134,7 @@ const FinancePayments = () => {
     }
     setSendingReceipt(true);
     try {
-      const response = await axios.post(`/api/receipts/${receiptId}/sms`, {}, config);
+      const response = await api.post(`/api/receipts/${receiptId}/sms`, {}, config);
       toast.success(response.data?.message || 'Receipt sent to customer via SMS!');
     } catch (error) {
       console.error('Error sending receipt SMS:', error);

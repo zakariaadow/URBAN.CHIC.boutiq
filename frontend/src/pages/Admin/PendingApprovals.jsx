@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaUserPlus, FaCheck, FaTimes, FaEye,
   FaSpinner, FaSearch, FaFilter,
@@ -36,7 +36,7 @@ const PendingApprovals = () => {
       if (filter !== 'all') {
         endpoint = `/api/admin/approvals/${filter}`;
       }
-      const response = await axios.get(endpoint, config);
+      const response = await api.get(endpoint, config);
       const data = response.data?.data || response.data || [];
       setApprovals(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -51,7 +51,7 @@ const PendingApprovals = () => {
   const handleApprove = async (id, role) => {
     setApproving(true);
     try {
-      await axios.post(`/api/admin/approvals/${role}/${id}`, {}, config);
+      await api.post(`/api/admin/approvals/${role}/${id}`, {}, config);
       toast.success(t('admin.approvals.approveSuccess'));
       fetchApprovals();
     } catch (error) {
@@ -66,7 +66,7 @@ const PendingApprovals = () => {
     if (!window.confirm(t('admin.approvals.rejectConfirmation'))) return;
     setApproving(true);
     try {
-      await axios.post(`/api/admin/approvals/reject/${id}`, {}, config);
+      await api.post(`/api/admin/approvals/reject/${id}`, {}, config);
       toast.success(t('admin.approvals.rejectSuccess'));
       fetchApprovals();
     } catch (error) {

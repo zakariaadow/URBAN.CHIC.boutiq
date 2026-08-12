@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import api from '../../services/api';
 import { 
   FaFolder, FaFolderOpen, FaEdit, FaTrash,
   FaSearch, FaPlus, FaToggleOn, FaToggleOff,
@@ -46,7 +46,7 @@ const Categories = () => {
         limit: 10,
         status: statusFilter !== 'all' ? statusFilter : undefined
       };
-      const response = await axios.get('/api/admin/categories', { ...config, params });
+      const response = await api.get('/api/admin/categories', { ...config, params });
       const data = response.data?.data || response.data || [];
       setCategories(Array.isArray(data) ? data : []);
       setTotalPages(response.data?.totalPages || 1);
@@ -61,7 +61,7 @@ const Categories = () => {
 
   const fetchCategoryServices = async (categoryId) => {
     try {
-      const response = await axios.get(`/api/categories/${categoryId}/services`, config);
+      const response = await api.get(`/api/categories/${categoryId}/services`, config);
       const data = response.data?.data || response.data || [];
       setCategoryServices(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -75,10 +75,10 @@ const Categories = () => {
     setSubmitting(true);
     try {
       if (editingCategory) {
-        await axios.put(`/api/admin/categories/${editingCategory.id}`, formData, config);
+        await api.put(`/api/admin/categories/${editingCategory.id}`, formData, config);
         toast.success(t('admin.categories.updateSuccess'));
       } else {
-        await axios.post('/api/admin/categories', formData, config);
+        await api.post('/api/admin/categories', formData, config);
         toast.success(t('admin.categories.createSuccess'));
       }
       resetForm();
@@ -93,7 +93,7 @@ const Categories = () => {
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
-      await axios.post(`/api/admin/categories/${id}/toggle`, {}, config);
+      await api.post(`/api/admin/categories/${id}/toggle`, {}, config);
       toast.success(t('admin.categories.statusUpdateSuccess'));
       fetchCategories();
     } catch (error) {
@@ -105,7 +105,7 @@ const Categories = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('admin.categories.deleteConfirmation'))) return;
     try {
-      await axios.delete(`/api/admin/categories/${id}`, config);
+      await api.delete(`/api/admin/categories/${id}`, config);
       toast.success(t('admin.categories.deleteSuccess'));
       fetchCategories();
     } catch (error) {

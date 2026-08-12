@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaFilePdf, FaFileExcel, FaTimes, FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../../services/api';
 
 const ExportModal = ({ isOpen, onClose, type, data, title }) => {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ const ExportModal = ({ isOpen, onClose, type, data, title }) => {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const response = await axios.post('/api/reports/export', {
+      const response = await api.post('/api/reports/export', {
         data,
         format,
         title,
