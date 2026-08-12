@@ -106,12 +106,12 @@ class Config:
     }
 
     # ========================================================
-    # CORS SETTINGS - ✅ UPDATED FOR PRODUCTION
+    # CORS SETTINGS - ✅ WILDCARD FOR VERCEL PREVIEW DEPLOYMENTS
     # ========================================================
 
     CORS_ORIGINS = os.environ.get(
         "CORS_ORIGINS",
-        "https://urban-chic-boutiq-real-estate-s-projects1.vercel.app,http://localhost:5173"
+        "https://urban-chic-boutiq-*.vercel.app,http://localhost:5173"
     ).split(',')
 
     # ========================================================

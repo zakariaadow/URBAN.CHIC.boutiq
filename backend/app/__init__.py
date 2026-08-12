@@ -1,4 +1,3 @@
-
 from flask import Flask, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -9,6 +8,7 @@ from flask_session import Session
 
 import os
 import sys
+import re  # ✅ Added for wildcard matching
 from datetime import datetime
 
 
@@ -112,7 +112,7 @@ def create_app(config_name=None):
 
 
     # ========================================================
-    # INITIALIZE SERVER SESSION - ✅ FIXED
+    # INITIALIZE SERVER SESSION
     # ========================================================
 
     # Only initialize session if SESSION_TYPE is not 'null'
@@ -126,7 +126,7 @@ def create_app(config_name=None):
 
 
     # ========================================================
-    # INITIALIZE CORS - ✅ EXPLICIT CONFIGURATION
+    # INITIALIZE CORS - ✅ WITH WILDCARD SUPPORT
     # ========================================================
 
     # Get CORS origins from config
@@ -141,12 +141,27 @@ def create_app(config_name=None):
         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
     )
     
-    # Add CORS headers after each request (fallback)
+    # Add CORS headers after each request (fallback with wildcard support)
     @app.after_request
     def after_request(response):
         origin = request.headers.get('Origin')
-        if origin and origin in cors_origins:
-            response.headers.add('Access-Control-Allow-Origin', origin)
+        if origin:
+            # Check if origin matches any allowed origin (including wildcard)
+            allowed = False
+            for allowed_origin in cors_origins:
+                # Convert wildcard pattern to regex
+                if '*' in allowed_origin:
+                    pattern = allowed_origin.replace('*', '.*')
+                    if re.match(f'^{pattern}$', origin):
+                        allowed = True
+                        break
+                elif origin == allowed_origin:
+                    allowed = True
+                    break
+            
+            if allowed:
+                response.headers.add('Access-Control-Allow-Origin', origin)
+        
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Accept')
         response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS,PATCH')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
