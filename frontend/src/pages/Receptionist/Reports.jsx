@@ -11,7 +11,7 @@ import {
 import { toast } from 'react-toastify';
 
 // Create axios instance with session-based authentication
-const customApi = customApi.create({
+const customApi = api.create({
   baseURL: '/api',
   withCredentials: true,
   headers: {
