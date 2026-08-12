@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';  // ✅ Use axios directly instead of api
+import axios from 'axios';
 import { 
   FaUser, FaEnvelope, FaLock, FaPhone,
   FaSpinner, FaEye, FaEyeSlash, FaCheck,
