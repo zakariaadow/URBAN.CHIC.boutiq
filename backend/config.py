@@ -147,23 +147,12 @@ class Config:
     FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
     # ========================================================
-    # SESSION SETTINGS - ✅ COMPLETELY FIXED
+    # SESSION SETTINGS - ✅ DISABLED
     # ========================================================
 
-    # Use 'filesystem' for session storage (works on Render)
-    SESSION_TYPE = "filesystem"
+    # Use 'null' session type to disable sessions (bypasses cookie issues)
+    SESSION_TYPE = "null"
     SESSION_COOKIE_NAME = "urban_chic_session"
-
-    # Session file directory for Render/Vercel
-    if IS_VERCEL or IS_RENDER:
-        SESSION_FILE_DIR = "/tmp/flask_session"
-    else:
-        SESSION_FILE_DIR = os.path.join(BASE_DIR, "flask_session")
-
-    # ✅ Ensure the session directory exists
-    if not os.path.exists(SESSION_FILE_DIR):
-        os.makedirs(SESSION_FILE_DIR, exist_ok=True)
-
     SESSION_PERMANENT = True
     SESSION_USE_SIGNER = True
     SESSION_KEY_PREFIX = "urban_chic_"
